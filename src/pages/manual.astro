@@ -1,0 +1,271 @@
+---
+import AppScreenshot from '../components/AppScreenshot.astro';
+import SiteLayout from '../layouts/SiteLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import { source, url } from '../data/site';
+const sections = [
+  ['screen', '画面の見かた'],
+  ['load', 'ファイルの読み込み'],
+  ['edit', 'キーとボーンの編集'],
+  ['camera', 'カメラ・エフェクト'],
+  ['save', 'プロジェクト保存'],
+  ['export', '画像・動画・モーション出力'],
+  ['shortcuts', 'ショートカット'],
+] as const;
+const shortcuts = [
+  ['Ctrl + O', 'モデル読込'],
+  ['Ctrl + M', 'モデルモーション読込'],
+  ['Ctrl + Shift + M', 'カメラモーション読込'],
+  ['Ctrl + Shift + A', '音源読込'],
+  ['Ctrl + S', 'プロジェクト保存 / 上書き'],
+  ['Ctrl + Alt + S', 'プロジェクトを別名で保存'],
+  ['Ctrl + Alt + O', 'プロジェクト読込'],
+  ['Ctrl + Shift + S', 'PNG画像出力'],
+  ['Space / P', '再生 / 一時停止'],
+  ['← / →', '1フレーム移動'],
+  ['Shift + ← / →', '10フレーム移動'],
+  ['Home / End', '再生範囲の開始 / 終了へ移動'],
+  ['I / K / Enter', '選択トラックの現在フレームにキーを登録'],
+  ['Delete', '選択キーを削除'],
+  ['Ctrl + Z / Ctrl + Y', '元に戻す / やり直す'],
+  ['Ctrl + C / Ctrl + V', '選択キーのコピー / 貼り付け'],
+  ['F', '選択ボーンへカメラの注視点を合わせる'],
+];
+---
+
+<SiteLayout
+  title="操作マニュアル"
+  description="MMD_modoki v0.2.4の基本操作。モデル・モーションの読み込み、キーフレーム編集、カメラ、保存、出力とショートカット。"
+  active="manual"
+>
+  <PageHeader
+    label="USER MANUAL"
+    title="操作マニュアル"
+    description="基本操作を目的ごとに。v0.2.4の公開ソースと関連文書で裏付けを確認できた範囲を掲載しています。UI言語や版によって表記が変わる場合があります。"
+  />
+  <div class="wrap content doc-layout">
+    <aside class="toc" aria-label="このページの目次">
+      <h2>このページの内容</h2>{
+        sections.map(([id, label]) => <a href={`#${id}`}>{label}</a>)
+      }
+    </aside>
+    <div class="doc-body">
+      <aside class="version-note">
+        <span class="badge">操作を探す</span><p>
+          一つの作品をつくる順序は<a href={url('workflow')}>制作の流れ</a
+          >へ。保存する形式は<a href={url('formats')}>ファイルの使い分け</a
+          >、見た目は<a href={url('effects')}>エフェクトガイド</a>で選べます。
+        </p>
+      </aside>
+      <section id="screen">
+        <h2>画面の見かた</h2><AppScreenshot /><p>
+          中央のビューポートで結果を確認し、タイムラインで時間を指定、下部のパネルで対象の値を調整します。
+        </p><div
+          class="screen-map"
+          role="img"
+          aria-label="画面構成の概念図。上部メニュー、左タイムライン、中央ビューポート、右エフェクト、下部各種編集パネル。"
+        >
+          <div class="wide">メニュー / 読み込み / 状態表示</div><div>
+            再生<br />タイムライン
+          </div><div class="viewport">3Dビューポート</div><div>
+            エフェクト
+          </div><div class="wide">
+            情報 / 補間 / ボーン / モーフ / カメラ / 照明 / 影 / 重力 /
+            アクセサリ
+          </div>
+        </div><p class="source-note">
+          概念図です。実際のアプリ画面のスクリーンショットではありません。
+        </p><p>
+          「情報」の「対象」でモデルや<code>Camera</code
+          >を選びます。複数モデルを読み込んだ場合は、対象が正しいか編集前に確認してください。上部のバッジで描画・物理の実行方式を確認できます。
+        </p><p>
+          アプリの「設定」メニューにはUI倍率があります。見づらい場合は表示倍率を調整してください。
+        </p>
+      </section>
+      <section id="load">
+        <h2>ファイルの読み込み</h2><p>
+          「ファイル」の各読込項目、またはウィンドウへのドラッグ＆ドロップを使います。ファイルの種類に合わせた専用読込を使うと対象を明確にできます。
+        </p><div class="table-scroll">
+          <table>
+            <thead
+              ><tr
+                ><th scope="col">用途</th><th scope="col">形式</th><th
+                  scope="col">補足</th
+                ></tr
+              ></thead
+            ><tbody
+              ><tr
+                ><td>モデル</td><td>PMX / PMD / BPMX</td><td
+                  >テクスチャの相対配置を保つ</td
+                ></tr
+              ><tr
+                ><td>アクセサリ</td><td>.x / OBJ</td><td
+                  >.xはテキスト形式。OBJは試験対応</td
+                ></tr
+              ><tr
+                ><td>モデルモーション</td><td>VMD / BVMD</td><td
+                  >先に対象モデルを選択</td
+                ></tr
+              ><tr
+                ><td>カメラモーション</td><td>VMD / BVMD</td><td
+                  >「カメラモーション読込」を使用</td
+                ></tr
+              ><tr
+                ><td>ポーズ</td><td>VPD</td><td>対象モデルへのポーズ読み込み</td
+                ></tr
+              ><tr
+                ><td>音声</td><td>MP3 / WAV</td><td>「音源読込」を使用</td></tr
+              ><tr
+                ><td>LUT</td><td>.3dl / .cube</td><td>LUTの読込UIで指定</td></tr
+              ><tr
+                ><td>プロジェクト</td><td>.mmdproj / プロジェクト形式の.json</td
+                ><td>通常のJSON全般を読み込めるわけではありません</td></tr
+              ></tbody
+            >
+          </table>
+        </div><p>
+          同じモデルを複数読み込めます。プロジェクトのドロップは、空のウィンドウならその場で開き、作業中なら新しいウィンドウで開きます。
+        </p><p>
+          OBJは単一MTLとローカルテクスチャの初期対応です。複数MTLやすべてのテクスチャオプションを保証しません。
+        </p>
+      </section>
+      <section id="edit">
+        <h2>キーとボーンの編集</h2><ol>
+          <li>
+            操作するモデルを選択し、タイムラインで編集するフレームへ移動します。
+          </li><li>
+            対象ボーンを選び、ボーン欄の位置・回転を調整します。モーフは対象のスライダーで値を調整します。
+          </li><li>
+            変更を残すには、ボーン欄・モーフ欄のキーフレーム登録ボタンを使います。プレビューとキー登録は別操作です。
+          </li><li>
+            別のフレームへ移動して姿勢を変え、もう一度登録します。短い範囲を再生して変化を確認します。
+          </li>
+        </ol><p>
+          選択トラックの現在値は<kbd>I</kbd>・<kbd>K</kbd>・<kbd>Enter</kbd
+          >でもキーに登録できます。同じフレームの登録は既存キーを更新する場合があります。
+        </p><p>
+          キーを選んで<kbd>Delete</kbd>で削除、<kbd>Ctrl + C</kbd> / <kbd
+            >Ctrl + V</kbd
+          >でコピー・貼り付け。<kbd>Ctrl + Z</kbd>で元に戻し、<kbd>Ctrl + Y</kbd
+          >でやり直せます。キー未選択・対象未選択では実行できない操作があります。
+        </p><p>
+          補間欄は選択トラックの補間カーブを編集するための欄です。照明・影・重力やアクセサリの変形も対応するキーとして保存できますが、すべてが標準VMDへ出力されるわけではありません。
+        </p><aside class="notice">
+          <strong>数値入力とキー登録を区別してください。</strong><p>
+            数値欄はEnterで確定する設計です。文字や数値を編集中は編集ショートカットを抑制する処理があります。入力を確定してから登録結果をタイムラインで確認してください。
+          </p>
+        </aside>
+      </section>
+      <section id="camera">
+        <h2>カメラ・エフェクト</h2><ul>
+          <li>右ドラッグ: 視点の回転</li><li>
+            中ボタンドラッグ、またはShift + 右ドラッグ: 平行移動
+          </li><li>ホイール: ズーム</li><li>
+            <kbd>F</kbd>: 選択ボーンへ注視点を合わせる
+          </li>
+        </ul><p>
+          再生中は読み込み済みカメラモーションを優先します。停止中は対象が<code
+            >Camera</code
+          >のときカメラモーションを反映し、モデル選択中はマウス操作を優先します。
+        </p><p>
+          右側のエフェクト欄では、対象モデルの材質やカメラ側のポストエフェクトを調整します。Bloom、DoF、LUTなどを少しずつ調整し、再生速度と出力結果を確認してください。SSGI・SSRなど高負荷な効果はGPUや解像度によって負荷が変わります。
+        </p><p>
+          通常UIでポストエフェクトを自由にキーフレーム化できるという案内はできません。READMEではエフェクトキー編集は開発向けオプトインとされています。
+        </p>
+      </section>
+      <section id="save">
+        <h2>プロジェクト保存</h2><p>
+          「ファイル → プロジェクト保存」、または<kbd>Ctrl + S</kbd
+          >を使います。保存済みなら上書き、<kbd>Ctrl + Alt + S</kbd
+          >なら別の保存先を指定できます。「プロジェクト読込」または<kbd
+            >Ctrl + Alt + O</kbd
+          >で再度開きます。
+        </p><p>
+          保存・読込ダイアログは<code>.mmdproj</code>と<code>.json</code
+          >を扱います。ソース上の既定ファイル名は<code
+            >project_日時.modoki.json</code
+          >です。保存先とファイル名はダイアログで確認してください。編集済みモデル・カメラのトラックや対応するシーン設定などを保存します。
+        </p><aside class="notice">
+          <strong>プロジェクトは素材を一括収納する形式ではありません。</strong
+          ><p>
+            モデル、テクスチャ、アクセサリ、音声などは元ファイルを参照します。別PCへ渡すときは参照素材も管理してください。保存後に素材のフォルダを移動すると、読み込めなくなる場合があります。
+          </p>
+        </aside>
+      </section>
+      <section id="export">
+        <h2>画像・動画・モーション出力</h2><p>
+          「ファイル」メニューに形式ごとの書き出し項目があります。最初は1枚のPNGや短い動画で設定を確認しましょう。
+        </p><div class="table-scroll">
+          <table>
+            <thead
+              ><tr><th scope="col">形式</th><th scope="col">目的と注意</th></tr
+              ></thead
+            ><tbody
+              ><tr
+                ><td>PNG画像</td><td
+                  >現在フレームを静止画に。解像度などを指定します。</td
+                ></tr
+              ><tr
+                ><td>PNG連番</td><td
+                  >フレームごとに出力。外部動画編集に使えますが容量が増えます。</td
+                ></tr
+              ><tr
+                ><td>WebM動画</td><td
+                  >出力範囲・解像度・FPSなどを設定。音声を含める場合は読込済み音声と音声設定を確認します。</td
+                ></tr
+              ><tr
+                ><td>モデル / カメラVMD・BVMD</td><td
+                  >編集したモーションを出力するβ機能。互換性は短い範囲で確認してください。</td
+                ></tr
+              ><tr
+                ><td>選択ボーンVPD</td><td
+                  >選択ボーンの現在ポーズを出力するβ機能。</td
+                ></tr
+              ></tbody
+            >
+          </table>
+        </div><p>
+          MP4出力はありません。必要な場合はWebMや連番PNGを外部ツールで変換してください。
+        </p><p>
+          標準VMDに照明・影・重力、外部親、物理結果のBakeなどすべての状態が保存されるわけではありません。制作途中の状態はプロジェクトとしても残してください。
+        </p>
+      </section>
+      <section id="shortcuts">
+        <h2>ショートカット</h2><p>
+          以下は公開ソースで確認できたキーです。macOSでもすべてがCommandキーに置き換わるとは限らないため、Ctrl表記のまま掲載しています。入力欄の編集中などは動作が異なる場合があります。
+        </p><div class="table-scroll">
+          <table>
+            <thead
+              ><tr><th scope="col">キー</th><th scope="col">操作</th></tr
+              ></thead
+            ><tbody
+              >{
+                shortcuts.map(([key, action]) => (
+                  <tr>
+                    <>
+                      <td>
+                        <kbd>{key}</kbd>
+                      </td>
+                      <td>{action}</td>
+                    </>
+                  </tr>
+                ))
+              }</tbody
+            >
+          </table>
+        </div>
+      </section>
+      <p class="source-note">
+        参照: <a href={source('README.ja.md')}>README ↗</a> / <a
+          href={source('index.html')}>メニューとパネル定義 ↗</a
+        > / <a href={source('src/ui-controller.ts')}>操作実装 ↗</a> / <a
+          href={source('docs/actions/keyframe-actions.md')}>キー操作仕様 ↗</a
+        > / <a href={source('docs/faq.md')}>本体FAQ ↗</a>
+      </p><div class="next-link">
+        <a href={url('guide')}>← スタートガイド</a><a href={url('faq')}
+          >困ったときはFAQへ →</a
+        >
+      </div>
+    </div>
+  </div>
+</SiteLayout>

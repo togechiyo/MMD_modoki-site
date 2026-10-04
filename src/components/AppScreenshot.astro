@@ -1,0 +1,27 @@
+---
+const imageUrl = `${import.meta.env.BASE_URL.replace(/\/$/, '')}/images/alicia-app-overview.png`;
+---
+
+<figure class="app-screenshot">
+  <a href={imageUrl} aria-label="編集画面の画像を原寸で開く">
+    <img
+      src={imageUrl}
+      width="2000"
+      height="1250"
+      decoding="async"
+      alt="MMD_modokiでアリシア・ソリッドを読み込んだ実際の編集画面。左にタイムライン、中央にモデル、下部にカメラと照明の操作パネル。"
+    />
+  </a>
+  <figcaption>
+    <p>
+      実際のローカル開発ビルドで撮影したモデル表示例です。配布版とは表示が異なる場合があります。モデル素材はアプリに付属しません。
+    </p>
+    <p>
+      使用モデル：ニコニ立体ちゃん（アリシア・ソリッド） / ©dwango, inc. All
+      rights reserved. キャラクターデザイン：黒星紅白 / モデリング：雨刻憩。<a
+        href="https://3d.nicovideo.jp/alicia/rule.html">モデル利用規約 ↗</a
+      >
+    </p>
+    <p>MMD_modokiはドワンゴの公式商品ではありません。</p>
+  </figcaption>
+</figure>

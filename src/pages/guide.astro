@@ -1,0 +1,125 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import { source, url } from '../data/site';
+---
+
+<SiteLayout
+  title="はじめての使い方"
+  description="MMD_modokiでモデルを読み込み、モーションを再生し、プロジェクトとPNGを保存するためのスタートガイド。"
+  active="guide"
+>
+  <PageHeader
+    label="GET STARTED"
+    title="最初のシーンをつくろう。"
+    description="まずはモデルを表示して、動きを確かめ、作業を保存するところまで。操作説明はv0.2.4の公開ソースを基準にしています。"
+  />
+  <div class="wrap content reading">
+    <aside class="notice">
+      <strong>はじめる前に</strong><p>
+        モデルとそのテクスチャ、モデルに合うモーションを用意します。これらの素材は本サイトでは配布していません。配布者の利用規約を確認し、元ファイルを別途保管してください。
+      </p>
+    </aside>
+    <section class="step">
+      <span class="step-num">01</span><div>
+        <h2>アプリを起動する</h2><p>
+          <a href={url('download')}>ダウンロードページ</a
+          >から環境に合う配布物を取得し、ZIPは全体を展開して起動します。描画方式は画面上部の<code
+            >WebGPU</code
+          > / <code>WebGL2</code>バッジで確認できます。
+        </p><p>
+          初回は重いエフェクトを追加せず、モデル1体から始めると問題の切り分けがしやすくなります。
+        </p>
+      </div>
+    </section>
+    <section class="step">
+      <span class="step-num">02</span><div>
+        <h2>モデルを読み込む</h2><p>
+          PMX・PMD・BPMXファイルをアプリのウィンドウへドラッグ＆ドロップします。<kbd
+            >Ctrl + O</kbd
+          >でもモデルを開けます。
+        </p><p>
+          PMX・PMDでモデル情報が表示されたら、名前・コメントを確認してOKを選びます。
+          テクスチャの相対配置を崩さないでください。複数モデルがある場合は、情報欄の「対象」で操作したいモデルを選びます。
+        </p>
+      </div>
+    </section>
+    <section class="step">
+      <span class="step-num">03</span><div>
+        <h2>モーションと音声を読み込む</h2><p>
+          動かしたいモデルを対象に選び、モデル用のVMD・BVMDを読み込みます。<kbd
+            >Ctrl + M</kbd
+          >でモーション、<kbd>Ctrl + Shift + M</kbd>でカメラモーション、<kbd
+            >Ctrl + Shift + A</kbd
+          >でMP3・WAV・OGG音声を開けます。
+        </p><p>
+          ファイルのドラッグ＆ドロップにも対応しています。モデルとカメラのVMDは内容に応じて判別されます。意図した対象へ読み込まれたかタイムラインを確認します。
+        </p>
+      </div>
+    </section>
+    <section class="step">
+      <span class="step-num">04</span><div>
+        <h2>再生して、視点を確かめる</h2><p>
+          <kbd>Space</kbd>または<kbd>P</kbd
+          >で再生・一時停止。停止中はホイールでズーム、右ドラッグで回転、中ボタンドラッグで視点を平行移動できます。
+        </p><p>
+          カメラモーションは再生中に反映されます。停止中にカメラモーションの視点を確認する場合は、対象を<code
+            >Camera</code
+          >に切り替えます。
+        </p>
+      </div>
+    </section>
+    <section class="step">
+      <span class="step-num">05</span><div>
+        <h2>作業をプロジェクトに保存する</h2><p>
+          <kbd>Ctrl + S</kbd
+          >でプロジェクトを保存します。最初の保存では保存先を指定し、以後は同じファイルへ上書きします。別名で残すときは<kbd
+            >Ctrl + Alt + S</kbd
+          >を使います。
+        </p><p>
+          プロジェクトは編集状態と素材の参照を保存します。モデル・テクスチャ・音声自体は埋め込まれないため、素材を移動・削除しないでください。
+        </p>
+      </div>
+    </section>
+    <section class="step">
+      <span class="step-num">06</span><div>
+        <h2>まずは1枚、PNGにする</h2><p>
+          保存したいフレームへ移動し、「ファイル」メニューのPNG画像出力で比率・寸法・背景透過を確認して保存します。幅と高さを直接入力するときは、それぞれEnterで確定し、表示された寸法を再確認します。<kbd
+            >Ctrl + Shift + S</kbd
+          >は現在の出力設定でPNGを保存するショートカットです。
+        </p><p>
+          動画が必要になったら、出力メニューのWebMや連番PNGを使います。最初は短い範囲で試し、背景・視点・出力寸法が意図どおりか確認しましょう。
+        </p>
+      </div>
+    </section>
+    <section class="guide-paths">
+      <h2>次は、つくりたいものに合わせて</h2>
+      <div class="choice-grid">
+        <a href={url('workflow')}
+          ><strong>ひとつの作品を仕上げる</strong><span
+            >動き・音・カメラから出力まで</span
+          ></a
+        >
+        <a href={url('effects')}
+          ><strong>見た目を整える</strong><span>材質と20種類の効果を選ぶ</span
+          ></a
+        >
+        <a href={url('formats')}
+          ><strong>保存形式を選ぶ</strong><span
+            >作業再開・動きの交換・完成品</span
+          ></a
+        >
+      </div>
+    </section>
+    <p class="source-note">
+      参照: <a href={source('README.ja.md')}>日本語README ↗</a> / <a
+        href={source('src/ui-controller.ts')}
+        >読み込み・ショートカットの実装 ↗</a
+      > / <a href={source('docs/faq.md')}>保存・出力のFAQ ↗</a>
+    </p><div class="next-link">
+      <a href={url('manual')}>編集を詳しく: 操作マニュアル →</a><a
+        href={url('faq')}>困ったときはFAQへ →</a
+      >
+    </div>
+  </div>
+</SiteLayout>

@@ -1,0 +1,192 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import { repository, source, url } from '../data/site';
+---
+
+<SiteLayout
+  title="よくある質問"
+  description="MMD_modokiの互換性、動作環境、モデルの読み込み、保存、画像・動画出力についてのFAQ。"
+  active="faq"
+>
+  <PageHeader
+    label="FAQ & SUPPORT"
+    title="よくある質問"
+    description="はじめる前の疑問から、制作中に困ったことまで。各質問を開くと説明が表示されます。"
+  />
+  <div class="wrap content reading faq-list">
+    <div class="choice-grid faq-choices">
+      <a href="#motion-target"
+        ><strong>動きが入らない</strong><span>対象モデル・ボーン名を確認</span
+        ></a
+      ><a href="#effect-change"
+        ><strong>効果が変わらない</strong><span>タブ・適用・経路を確認</span></a
+      ><a href="#missing-assets"
+        ><strong>作業を開き直せない</strong><span>プロジェクトと参照素材</span
+        ></a
+      ><a href="#silent-output"
+        ><strong>動画に音がない</strong><span>音声あり・音源を確認</span></a
+      >
+    </div>
+    <h2>アプリと互換性</h2>
+    <details open>
+      <summary>本家MMDの完全な代替ですか？</summary><p>
+        現時点では技術的試作・実験機です。本家MMDと同じ表示、物理結果、補間、エフェクト互換を保証しません。基本的な編集を別環境でも扱えることを目指しています。
+      </p>
+    </details>
+    <details>
+      <summary>無料で使えますか？ 素材の権利はどうなりますか？</summary><p>
+        アプリ本体は<a href={source('LICENSE')}>MIT License</a
+        >で公開されています。モデル、モーション、音源、テクスチャの権利は別です。素材の配布者が定める利用規約を守ってください。<a
+          href={source('THIRD_PARTY_NOTICES.md')}>第三者ライセンス表記</a
+        >も確認できます。
+      </p>
+    </details>
+    <details>
+      <summary>PMMやMMEのエフェクトは使えますか？</summary><p>
+        本家MMDの<code>.pmm</code>プロジェクトは読み込めません。MMEの<code
+          >.fx</code
+        > / <code>.fxsub</code
+        >を一般的に読み込む互換機能もありません。内蔵材質プリセットとポストエフェクトを使用します。外部WGSLは実験機能で、MME互換ではありません。
+      </p>
+    </details>
+    <h2>動作環境と更新</h2>
+    <details>
+      <summary>どのOSで動きますか？ WebGPUは必須ですか？</summary><p>
+        Windows・macOS・Linux向けのプレビュー配布があります。具体的なCPU対象は<a
+          href={url('download')}>ダウンロードページ</a
+        >で確認してください。WebGPUを優先し、利用できない場合はWebGL2へ切り替わります。GPU、ドライバー、OSの組み合わせで動作や使える効果が異なります。固定の最低GPU要件は未定です。
+      </p>
+    </details>
+    <details>
+      <summary>macOSやLinuxで起動できません。</summary><p>
+        macOS版は未署名・未公証で、OSが起動を制限する場合があります。Linux版は環境のライブラリやChromium
+        sandboxの違いで起動できない場合があります。取得元とエラーを確認し、<a
+          href={source('docs/faq.md')}>本体FAQ</a
+        >と<a href={source('docs/troubleshooting.md')}>トラブルシュート</a
+        >を参照してください。
+      </p>
+    </details>
+    <details>
+      <summary>インターネット接続は必要ですか？</summary><p>
+        配布アプリの通常の編集・描画・保存・出力はoffline-firstです。アプリのダウンロード、GitHub文書やIssueの閲覧にはインターネット接続が必要です。ローカルMCPなど実験機能は通常の編集とは別の設定です。
+      </p>
+    </details>
+    <details>
+      <summary>自動更新されますか？</summary><p>
+        自動更新機能はありません。公式<a href={`${repository}/releases`}
+          >Releases</a
+        >から新しい版を取得して、別フォルダへ展開してください。プロジェクトと参照素材は更新前にバックアップし、重要な作業は短い範囲で確認してください。
+      </p>
+    </details>
+    <h2>読み込み・保存・表示</h2>
+    <details id="texture">
+      <summary>モデルのテクスチャが表示されません。</summary><p>
+        モデルファイルとテクスチャの相対配置、ファイル名、拡張子、大文字・小文字がモデル内の参照と一致するか確認します。素材のフォルダ構成を崩していないかも確認してください。特殊な圧縮形式やGPUによって互換性が異なる場合があります。
+      </p>
+    </details>
+    <details>
+      <summary>プロジェクトにモデルや音声も埋め込まれますか？</summary><p>
+        埋め込まれません。プロジェクトは編集状態やシーン設定を保存し、モデル・テクスチャ・アクセサリ・音声などは元ファイルを参照します。移動や別PCでの再開には参照素材も必要です。<a
+          href={url('manual') + '#save'}>プロジェクト保存の説明</a
+        >をご覧ください。
+      </p>
+    </details>
+    <details id="slow">
+      <summary>動作が重い、物理結果が本家MMDと違います。</summary><p>
+        SSGI・SSR・SSAO・DoF・Motion
+        Blurなど追加処理を使う効果を一つずつOFFにして比較し、影品質や解像度、モデル数を見直すと改善する場合があります。物理ランタイム、時間刻み、シーク操作、負荷の違いで物理結果が変わることがあります。制作するPCで短い再生・出力を確認してください。<a
+          href={url('effects') + '#performance'}>効果と処理の見直し</a
+        >へ。
+      </p>
+    </details>
+    <h2>出力とサポート</h2>
+    <details id="motion-target">
+      <summary>モーションが動かない、別のモデルへ入ってしまいます。</summary><p>
+        情報欄の「対象」を確認してからモデル用読込を実行します。カメラ用ファイルは専用のカメラ読込を使ってください。モデルにないボーン名・モーフ名は期待どおりには反映されない場合があります。まずモデル1体と短い範囲で確認し、元のモーションは保管します。
+      </p><a href={url('workflow') + '#motion-audio'}
+        >動きと音楽の読み込み手順 →</a
+      >
+    </details>
+    <details id="effect-change">
+      <summary>プリセットを選んだのに、見た目が変わりません。</summary><p>
+        Effectの「材質」タブで対象モデル・材質を選び、プリセットを選んだあとに適用ボタンを押します。「効果」タブのポストエフェクトとは別です。個別OFF・全体OFFになっていないか、現在の描画経路が対応しているかを確認します。
+      </p><p>
+        ルミナスは光らせる材質、SSRはSSR
+        Reflective指定も確認。材質を変えただけで全画面の発光・反射処理が自動で完成するわけではありません。
+      </p><a href={url('effects') + '#operate'}>効果の追加と適用 →</a>
+    </details>
+    <details id="outline-ssao">
+      <summary>SSAOをONにすると、モデルの輪郭線が消えます。</summary><p>
+        v0.2.4にはSSAOとモデル輪郭線の衝突を避けるため、SSAOを有効にすると輪郭線幅を0にする処理があります。輪郭線幅を戻すとSSAOが無効になる場合もあります。今回の撮影用ローカル版では共存処理を変更していますが、公開版に含まれる変更だとは扱っていません。
+      </p><a href={url('effects') + '#ssao'}>SSAOと版の違い →</a>
+    </details>
+    <details id="missing-assets">
+      <summary>プロジェクトを別PCへ移したら、素材が見つかりません。</summary><p>
+        プロジェクトは素材を埋め込まず参照します。元のモデル・テクスチャ・音声・背景も必要です。フォルダ構成、ファイル名、参照パスが移動先で解決できるか確認します。元PCの作業を上書きせず、コピーで確認してください。
+      </p><a href={url('formats') + '#project'}>プロジェクトと元素材の保管 →</a>
+    </details>
+    <details id="silent-output">
+      <summary>WebMに音楽が入っていません。</summary><p>
+        音源を読み込んで再生できることを確認し、WebM出力の「音声あり」をONにします。初期状態はOFFです。連番PNGには音声は含まれないので、動画編集ソフトで別途合わせます。
+      </p><a href={url('formats') + '#webm'}>WebMの音声と設定 →</a>
+    </details>
+    <details id="transparent">
+      <summary>透過素材として動画を合成したいです。</summary><p>
+        PNG単体・連番PNGに背景透過の設定があります。WebMには透過のチェックがありません。連番PNGを編集ソフトで背景に重ね、音声は別に読み込みます。髪・半透明材質・PostFXの境界は、別の背景色に重ねて確認してください。
+      </p><a href={url('formats') + '#sequence'}>連番PNGで合成する →</a>
+    </details>
+    <details id="pose-export">
+      <summary>VPDの書き出しが選べません。</summary><p>
+        モデルを対象にし、書き出せるボーンを1本以上選びます。現在の選択ボーンのローカル姿勢を保存する機能で、全モデルや全シーンを自動で保存する機能ではありません。ボーン名をShift-JISへ変換できない場合などは、保存が拒否されます。
+      </p><a href={url('formats') + '#pose'}>VPDが残す姿勢 →</a>
+    </details>
+    <details id="vmd-name">
+      <summary>VMD書き出しで、名前のエラーが出ます。</summary><p>
+        VMDにはShift-JISと固定byte長の制限があります。無理に文字を置換して保存せず、モデル・トラックの名前を確認してください。対応する受け取り環境では、UTF-8名を保持できるBVMDが選択肢になります。プロジェクトも残します。
+      </p><a href={url('formats') + '#motion'}>VMDとBVMDの使い分け →</a>
+    </details>
+    <details>
+      <summary>MP4を直接出力できますか？</summary><p>
+        現在は対応していません。WebM動画または連番PNGを出力し、外部ツールで変換・編集してください。
+      </p>
+    </details>
+    <details id="motion-output">
+      <summary>VMDにすべての編集状態を保存できますか？</summary><p>
+        モデル・カメラのVMD書き出しはβ機能です。照明・影・重力などの独自シーンキー、外部親、物理結果のBakeなどすべての状態を標準VMDへ渡すわけではありません。プロジェクトも保管し、他アプリでの読み込みを短い範囲で確認してください。
+      </p>
+    </details>
+    <details id="output-difference">
+      <summary>画面と出力が違うとき、不具合をどこへ報告しますか？</summary><p>
+        <a href={`${repository}/issues`}>本体のGitHub Issues</a
+        >へ、アプリの版、OS、GPU、描画方式、再現手順、出力設定とエラーを添えて報告してください。同じフレームのPNGとビューポート画像があると切り分けに役立ちます。素材を添付する場合は、再配布できるものに限ってください。
+      </p>
+    </details>
+    <p class="source-note">
+      参照: <a href={source('docs/faq.md')}>本体FAQ ↗</a> / <a
+        href={source('docs/troubleshooting.md')}>トラブルシュート ↗</a
+      > / <a href={source('README.ja.md')}>v0.2.4のREADME ↗</a>
+    </p><div class="next-link">
+      <a href={url('guide')}>スタートガイドへ →</a><a href={url('manual')}
+        >操作マニュアルへ →</a
+      >
+    </div>
+  </div>
+</SiteLayout>
+<script>
+  function openLinkedQuestion() {
+    let id: string;
+    try {
+      id = decodeURIComponent(location.hash.slice(1));
+    } catch {
+      return;
+    }
+    const question = document.getElementById(id);
+    if (question instanceof HTMLDetailsElement) {
+      question.open = true;
+      question.scrollIntoView({ block: 'start' });
+    }
+  }
+  openLinkedQuestion();
+  window.addEventListener('hashchange', openLinkedQuestion);
+</script>

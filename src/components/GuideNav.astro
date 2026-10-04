@@ -1,0 +1,22 @@
+---
+import { url } from '../data/site';
+const { active } = Astro.props;
+const links = [
+  ['guide', 'はじめて'],
+  ['workflow', '制作の流れ'],
+  ['formats', 'ファイルの使い分け'],
+  ['effects', 'エフェクト'],
+  ['manual', '操作一覧'],
+  ['faq', '困ったとき'],
+] as const;
+---
+
+<nav class="guide-nav wrap" aria-label="使い方ガイド">
+  {
+    links.map(([slug, label]) => (
+      <a href={url(slug)} aria-current={active === slug ? 'page' : undefined}>
+        {label}
+      </a>
+    ))
+  }
+</nav>

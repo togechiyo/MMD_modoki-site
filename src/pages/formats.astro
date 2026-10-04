@@ -1,0 +1,358 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import { source, url } from '../data/site';
+const toc = [
+  ['choose', '目的から選ぶ'],
+  ['project', '作業を続ける'],
+  ['models', 'モデルと小物'],
+  ['motion', '動きとポーズ'],
+  ['media', '音楽・背景・色'],
+  ['render', '画像と動画'],
+  ['exchange', '他のアプリへ渡す'],
+];
+const media = [
+  [
+    '音声',
+    'MP3 / WAV / OGG',
+    '音楽を読み込み、再生と波形の確認に。WebMへ入れるには出力時の「音声あり」をONにする。',
+  ],
+  [
+    '背景画像',
+    'PNG / JPG / JPEG / BMP / WebP',
+    '背景・参照画像に。キャラクターのモデルや動きにはならない。',
+  ],
+  [
+    '背景動画',
+    'WebM / MP4 / AVI',
+    '背景として再生。拡張子を受け付けても、その中のコーデックが再生できる保証ではない。',
+  ],
+  [
+    '環境',
+    'HDR / ENV / DDS',
+    '環境・HDRI用。モデルや通常の背景画像とは異なる読み込み入口。',
+  ],
+  [
+    '色変換表',
+    '3DL / CUBE',
+    '外部LUTとしてポストエフェクトに使用。モデルのテクスチャとは別。',
+  ],
+];
+---
+
+<SiteLayout
+  title="ファイルの使い分け"
+  description="編集再開はプロジェクト、他ツールへの動きはVMD、1枚はPNG、動画はWebM。PMX/BPMX、VMD/BVMD/VPDの選び方と保存されない情報。"
+  active="formats"
+>
+  <PageHeader
+    label="FILES & OUTPUT"
+    title="そのファイルで、何を残す？"
+    description="編集を続けるファイルと、完成した画像・動画は役割が違います。目的を先に決めると、保存し忘れや形式の取り違えを減らせます。"
+  />
+  <div class="wrap content doc-layout">
+    <aside class="toc" aria-label="このページの目次">
+      <h2>形式ガイド</h2>{
+        toc.map(([id, label]) => <a href={`#${id}`}>{label}</a>)
+      }
+    </aside><div class="doc-body">
+      <aside class="version-note">
+        <span class="badge">v0.2.4 基準</span><p>
+          公開タグの読み込み・保存・出力実装を確認しています。受け付ける拡張子と、あらゆるファイルを正しく再生できることは別です。
+        </p>
+      </aside>
+      <section id="choose">
+        <h2>目的で選ぶ、保存と出力</h2><div class="choice-grid">
+          <a href="#project"
+            ><strong>明日、同じ作業を続けたい</strong><span
+              >プロジェクト＋元素材を保管</span
+            ></a
+          >
+          <a href="#motion"
+            ><strong>別のMMDツールへ動きを渡したい</strong><span
+              >モデル / カメラのVMD（β）</span
+            ></a
+          >
+          <a href="#pose"
+            ><strong>ひとつの姿勢を使い回したい</strong><span
+              >選択ボーンのVPD（β）</span
+            ></a
+          >
+          <a href="#png"
+            ><strong>サムネイルや1枚絵をつくりたい</strong><span>PNG</span></a
+          >
+          <a href="#sequence"
+            ><strong>動画編集ソフトで合成したい</strong><span
+              >連番PNG＋音声を別途</span
+            ></a
+          >
+          <a href="#webm"
+            ><strong>音付きの動画を確認・共有したい</strong><span
+              >WebM＋音声あり</span
+            ></a
+          >
+        </div><aside class="notice">
+          <strong>完成品を出力しても、編集状態は保存されません。</strong><p>
+            PNGやWebMからタイムラインへ戻すことはできません。書き出す前にプロジェクトを保存し、原本のモデル・動き・音源も残します。
+          </p>
+        </aside>
+      </section>
+      <section id="project">
+        <h2>作業を続けるなら、プロジェクト</h2><p>
+          <code>.mmdproj</code>またはMMD_modoki専用のスキーマを持つ<code
+            >.json</code
+          >を使います。既定名は<code>project_日時.modoki.json</code
+          >です。拡張子だけを変えた一般的なJSONがプロジェクトになるわけではありません。
+        </p>
+        <div class="two-notes">
+          <div>
+            <h3>残るもの</h3><p>
+              シーンの設定、登録した編集状態、出力設定、モデル・モーション・音声などの素材参照。作業の再開を目的とする保存です。
+            </p>
+          </div><div>
+            <h3>別に保管するもの</h3><p>
+              元モデル、テクスチャ、アクセサリ、モーション、音声、背景など。プロジェクトは素材一式を包むアーカイブではありません。
+            </p>
+          </div>
+        </div>
+        <ol>
+          <li><kbd>Ctrl + S</kbd>で保存。初回は保存先を指定します。</li><li>
+            比較前の状態を残すなら<kbd>Ctrl + Alt + S</kbd>で別名保存します。
+          </li><li>
+            再開は<kbd>Ctrl + Alt + O</kbd>。プロジェクト1件だけを開きます。
+          </li><li>
+            別PCへ移す場合は素材も揃え、参照パスと相対フォルダを確認します。
+          </li>
+        </ol>
+        <p>
+          複数プロジェクトや、プロジェクトと素材を混ぜたドラッグ＆ドロップは避けてください。外部LUTやWGSLにはプロジェクト相対の保存処理もありますが、モデル等の素材をまとめて梱包する機能ではありません。
+        </p><p class="source-note">
+          根拠：<a href={source('src/ui-controller.ts')}>保存・読込・既定名</a> /
+          <a href={source('src/project/project-serializer.ts')}>シリアライズ</a> /
+          <a href={source('src/project/project-importer.ts')}>素材参照の復元</a>
+        </p>
+      </section>
+      <section id="models">
+        <h2>人物のモデルと、ステージの小物</h2><div class="table-scroll">
+          <table>
+            <thead
+              ><tr
+                ><th scope="col">形式</th><th scope="col">何をしたいとき</th><th
+                  scope="col">扱い方</th
+                ></tr
+              ></thead
+            ><tbody>
+              <tr
+                ><th scope="row">PMX / PMD</th><td
+                  >MMD用の人物・ステージを読み込む</td
+                ><td
+                  >原本として保管。モデルから参照するテクスチャの配置も保持。</td
+                ></tr
+              >
+              <tr
+                ><th scope="row">BPMX</th><td
+                  >babylon-mmd向けのモデル形式を使う</td
+                ><td
+                  >対応は3.0.x。モデルとテクスチャを内包する形式。汎用交換には元のPMX/PMDも残す。</td
+                ></tr
+              >
+              <tr
+                ><th scope="row">.x</th><td>MMD用アクセサリを置く</td><td
+                  >text-formatの.xをアクセサリとして扱う。人物のボーン付きモデルの代わりではない。</td
+                ></tr
+              >
+              <tr
+                ><th scope="row">OBJ</th><td>静的な小物や背景を置く</td><td
+                  >OBJ、MTL、テクスチャのフォルダ構成を揃える。MTLなしでは中立的な材質表示。</td
+                ></tr
+              >
+            </tbody>
+          </table>
+        </div>
+        <details>
+          <summary>BPMXへの変換で、何が保存されますか？</summary><p>
+            最適化形式の変換器は<strong>元のPMX/PMDファイル</strong>を読んでBPMX
+            3.0.0を作ります。編集中のモデル形状・現在のポーズ・シーンをBPMXに書き出す操作ではありません。元にないテクスチャを修復する処理でもありません。生成物を再読み込みして表示を確認し、原本は保管してください。
+          </p>
+        </details>
+        <p>
+          PMX・PMD・OBJとしてモデルをエクスポートする機能は確認できていません。GLB入力は現行実装で無効です。画面にモデルが表示されても、一般的な3Dモデル変換ツールの代わりにはなりません。
+        </p><p class="source-note">
+          根拠：<a
+            href={source('docs/bpmx-bvmd-implementation-guide-2026-09-02.md')}
+            >BPMX/BVMDの実装</a
+          > / <a href={source('src/shared/obj-local-materials.ts')}
+            >OBJのローカル素材</a
+          > / <a
+            href={source('src/ui/mmd-optimized-format-dialog-controller.ts')}
+            >変換器</a
+          >
+        </p>
+      </section>
+      <section id="motion">
+        <h2>動きはVMD / BVMD、姿勢はVPD</h2><p>
+          モデル用とカメラ用の動きは別です。モデルを「対象」に選んで<kbd
+            >Ctrl + M</kbd
+          >、カメラには<kbd>Ctrl + Shift + M</kbd
+          >を使います。自動判別に任せるより、専用の読み込みで意図を明確にできます。
+        </p>
+        <div class="two-notes">
+          <div>
+            <h3>VMD：MMD系ツールへ渡す</h3><p>
+              登録されたモデルまたはカメラのアニメーションキーを書き出すβ機能。モデルとカメラを別のファイルに保存します。元のVMDを読み込んだ場合も、変更したキーを渡すための出力です。
+            </p>
+          </div><div>
+            <h3>BVMD：対応環境で名前を保つ</h3><p>
+              babylon-mmd向けの動きの形式で、対応は3.0.x。UTF-8の可変長トラック名をVMD経由せず保持できます。受け取り側がBVMDに対応している場合に選びます。
+            </p>
+          </div>
+        </div>
+        <aside class="notice">
+          <strong>動きのファイルは、シーン全体の保存ではありません。</strong><p>
+            照明・影・重力・外部親・アクセサリ・背景・エフェクトの状態はVMD/BVMDにまとめて入りません。物理結果を焼き込んだ最終描画ポーズの書き出しでもありません。作業はプロジェクトでも保管してください。
+          </p>
+        </aside>
+        <details>
+          <summary>VMDの名前・カメラ・外部親の制限</summary><p>
+            Shift-JISへ変換できない名前は拒否されます。ボーン・モーフ名は15byte、IK名は20byteの制約があります。モデルヘッダ名の切り詰めには警告があります。カメラ出力の透視フラグはON固定です。外部親の影響はworld
+            bakeされないため、他ツールで見た目が一致するとは限りません。
+          </p><p>
+            名前の保持を優先する対応環境ではBVMDを検討できます。ただし、すでにVMDで失われた名前が変換で復元することはありません。
+          </p>
+        </details>
+        <article id="pose" class="effect-card">
+          <p class="eyebrow">ONE POSE / VPD</p><h3>
+            選んだボーンの、今の姿勢を残す
+          </h3><p>
+            VPDはひとつのポーズです。出力対象は<strong
+              >選択ボーンの現在のローカル姿勢</strong
+            >で、書き出せるボーンを最低1本選びます。キー登録前の手動調整も保存できます。
+          </p><p>
+            全ボーンを自動で選ぶ保存でも、モーフや全シーンの保存でもありません。物理・IK・外部親を含む最終結果の焼き込みは行いません。外部親の合成は除かれ、警告が出る場合があります。読み込みは現在フレームのアクティブなモデルのアニメーションへマージします。読込前に作業を保存し、対象と現在フレームを確認してください。
+          </p>
+        </article>
+        <p class="source-note">
+          根拠：<a
+            href={source(
+              'docs/vmd-export-beta-implementation-guide-2026-08-14.md',
+            )}>VMD書き出し</a
+          > / <a href={source('src/export/bvmd-exporter.ts')}
+            >BVMD出力トラック</a
+          > / <a
+            href={source(
+              'docs/vpd-export-research-implementation-spec-2026-08-14.md',
+            )}>VPD仕様</a
+          > / <a href={source('src/assets/motion-asset-service.ts')}
+            >ポーズ読み込み</a
+          >
+        </p>
+      </section>
+      <section id="media">
+        <h2>音楽・背景・色の素材</h2><div class="table-scroll">
+          <table>
+            <thead
+              ><tr
+                ><th scope="col">用途</th><th scope="col">入力</th><th
+                  scope="col">選び方</th
+                ></tr
+              ></thead
+            ><tbody
+              >{
+                media.map(([kind, format, text]) => (
+                  <tr>
+                    <>
+                      <th scope="row">{kind}</th>
+                      <td>{format}</td>
+                      <td>{text}</td>
+                    </>
+                  </tr>
+                ))
+              }</tbody
+            >
+          </table>
+        </div><p>
+          動画のMP4/AVI入力と、MP4/AVI動画の出力は別です。音声や背景動画はコーデックにも依存します。読込後に短く再生して、音や映像が出るか確認します。
+        </p><p class="source-note">
+          根拠：<a href={source('src/ui-controller.ts')}
+            >ファイル種別と読込処理</a
+          > / <a href={source('src/ui/lut-panel-controller.ts')}
+            >LUTの読込・保存</a
+          >
+        </p>
+      </section>
+      <section id="render">
+        <h2>完成した見た目を、画像・動画にする</h2><article
+          id="png"
+          class="effect-card"
+        >
+          <p class="eyebrow">STILL / PNG</p><h3>1枚絵・サムネイルならPNG</h3><p>
+            現在のフレームを1枚の画像にします。構図を止め、比率と寸法を指定します。背景透過のチェックがあります。UIのスクリーンショットとは違い、シーンを画像として出力します。
+          </p><p>
+            透過が必要な場合はPNGを別の背景色に重ね、輪郭を確認します。背景やPostFXの組み合わせで結果が変わるため、透過設定だけで全効果の合成品質を保証しません。
+          </p>
+        </article>
+        <article id="sequence" class="effect-card">
+          <p class="eyebrow">COMPOSITING / PNG SEQUENCE</p><h3>
+            合成・動画編集なら連番PNG
+          </h3><p>
+            指定範囲をフレームごとの画像にします。開始・終了は出力範囲を使い、1フレームずつ生成します。透過にも対応。通常の保存では選んだフォルダ内に連番用のサブフォルダを作ります。
+          </p><p>
+            <strong>音声は入りません。</strong
+            >動画編集ソフトで画像群と音声を合わせます。画像自体には再生FPSがないので、読み込み側でタイムラインの30fps基準に合わせて速度を確認してください。WebMの60fps指定のような再サンプリングと同一だとは扱わないでください。
+          </p><p>
+            長い範囲は枚数と保存容量が増えます。まず短い範囲で、先頭数枚と末尾を実際に開いて確認します。ファイル数だけで成功と判断しないでください。空白が混じる場合は短い範囲で再出力し、改善しなければ設定と再現手順を記録します。
+          </p>
+        </article>
+        <article id="webm" class="effect-card">
+          <p class="eyebrow">VIDEO / WEBM</p><h3>
+            音付き動画をつくるならWebM
+          </h3><p>
+            比率・寸法・FPS・開始終了フレームを指定します。FPSは<strong
+              >24 / 30 / 60</strong
+            >。タイムラインは30fps基準で、出力FPSを変えても再生時間を維持する設計です。
+          </p><p>
+            音楽を読み込んだうえで<strong>「音声あり」</strong
+            >をONにします。初期状態はOFFです。音声ファイルを開いただけでは、音声入り出力にはなりません。WebM出力には背景透過のチェックはありません。
+          </p><p>
+            MP4/AVIの直接出力ではありません。内部のコーデックは実行環境に応じて選ばれ、通常UIにコーデック選択欄はありません。提出先でMP4が必要なら外部ツールで変換し、変換後の映像・音声を再確認します。
+          </p>
+        </article>
+        <aside class="notice">
+          <strong>大きな解像度は、最後に。</strong><p>
+            UIで8192などの値を指定できても、その寸法でのGPU動作を保証するものではありません。まず小さな寸法・短い範囲で出力し、次に本番寸法を確認します。時間・画質・対応環境の固定保証はありません。
+          </p>
+        </aside>
+        <p class="source-note">
+          根拠：<a href={source('src/ui/png-export-dialog-controller.ts')}
+            >PNG設定</a
+          > / <a href={source('src/ui/webm-export-dialog-controller.ts')}
+            >WebM設定</a
+          > / <a href={source('src/ui/export-ui-controller.ts')}
+            >出力範囲・連番処理</a
+          > / <a href={source('src/webm-exporter.ts')}>動画生成</a>
+        </p>
+      </section>
+      <section id="exchange">
+        <h2>他のアプリへ渡す前のチェック</h2><ol>
+          <li>編集再開が必要ならプロジェクトと素材を保管。</li><li>
+            動きだけならモデルとカメラのVMD/BVMDを分ける。受け取り側の対応形式を確認。
+          </li><li>受け取り側でも同じモデルを使い、短い範囲で読み戻す。</li><li>
+            音・背景・効果は別途再現するか、完成したWebM/PNGとして渡す。
+          </li><li>
+            配布者の利用条件を確認。素材や作品の再配布は、アプリのライセンスとは別。
+          </li>
+        </ol><p>
+          <a href={url('workflow') + '#test-export'}>書き出し前の確認手順</a> / <a
+            href={url('faq') + '#motion-output'}
+            >動きの書き出しが一致しないとき</a
+          >
+        </p>
+      </section>
+      <div class="next-link">
+        <a href={url('workflow')}>制作の流れに沿って使う →</a><a
+          href={url('manual') + '#export'}>出力の操作一覧 →</a
+        >
+      </div>
+    </div>
+  </div>
+</SiteLayout>

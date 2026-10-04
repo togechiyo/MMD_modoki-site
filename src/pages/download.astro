@@ -1,0 +1,100 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import { release, repository, source, url } from '../data/site';
+---
+
+<SiteLayout
+  title="ダウンロード"
+  description="MMD_modokiの公式GitHub Releasesへの案内。Windows、macOS、Linux向けのプレビュー配布と起動時の注意事項。"
+  active="download"
+>
+  <PageHeader
+    label="DOWNLOAD"
+    title="あなたの環境で、はじめよう。"
+    description="配布ファイルはアプリ本体のGitHub Releasesから取得できます。OSとCPUに合うファイルを選んでください。"
+  />
+  <div class="wrap content">
+    <div class="version-heading">
+      <h2>{release.tag}</h2><span class="badge">PRE-RELEASE / プレビュー版</span
+      >
+    </div><p class="source-note">
+      公開日 {release.published} · 配布状況確認 {release.checked}
+    </p>
+    <aside class="notice">
+      <strong>現在、安定版リリースはありません。</strong><p>
+        公開Releasesを確認した時点では、すべてプレリリースです。v0.2.4は公開済みですが、実験的な位置づけです。各OSでの動作はGPU・ドライバー・環境に依存します。
+      </p>
+    </aside>
+    <div class="download-grid">
+      {
+        release.downloads.map((item) => (
+          <article class="download-card">
+            <>
+              <h3>{item.os}</h3>
+              <p>
+                {item.arch} · {item.format}
+              </p>
+              <a
+                class="button primary"
+                href={`${repository}/releases/download/${release.tag}/${item.file}`}
+              >
+                {item.format}をダウンロード <span aria-hidden="true">↓</span>
+              </a>
+              <span class="file-name">{item.file}</span>
+            </>
+          </article>
+        ))
+      }
+    </div>
+    <p class="source-note">
+      macOS ZIPのファイル名はCPUを明示していません。Apple
+      Silicon向けDMGとは別に、Releaseの説明を確認してください。<a
+        href={release.url}>v0.2.4の配布ページ ↗</a
+      >
+    </p>
+    <div class="reading">
+      <h2>ダウンロードしたら</h2><ol>
+        <li>
+          ZIPは全体を展開してから起動します。Windowsは展開先の<code
+            >MMD modoki.exe</code
+          >、macOSは<code>MMD modoki.app</code>を使用します。
+        </li><li>
+          モデル、テクスチャ、モーションは別途用意します。各素材の利用規約を確認し、元のフォルダ構成を保ってください。
+        </li><li>
+          モデルを読み込んで短い範囲を再生し、保存・出力を試してから制作を始めます。
+        </li>
+      </ol>
+      <h2>起動・環境について</h2><ul>
+        <li>
+          <strong>Windows:</strong> SmartScreenが表示されることがあります。ファイルの取得元が公式Releasesか確認してください。
+        </li><li>
+          <strong>macOS:</strong> 現在の配布は未署名・未公証です。OSによって起動が制限される場合があります。詳しくは本体のFAQを確認してください。
+        </li><li>
+          <strong>Linux:</strong> 追加ライブラリやChromium sandboxに関係する起動問題が報告されています。エラー内容を確認し、本体のトラブルシュートを参照してください。
+        </li><li>
+          <strong>描画:</strong> WebGPUを優先し、利用できない場合はWebGL2に切り替わります。固定した最低GPU・OSバージョン要件は公表されていません。
+        </li>
+      </ul>
+      <h2>更新と既知の制限</h2><p>
+        自動更新機能はありません。新しい版は別フォルダへ展開し、プロジェクトと元の素材をバックアップしてから開いてください。
+      </p><p>
+        PBR材質・外部WGSL・ローカルMCPは実験機能です。モデルVMD・カメラVMDの書き出しはβ版で、外部WGSLはMME互換ではありません。
+      </p><div class="actions">
+        <a class="button secondary" href={release.url}>変更点・既知の制限 ↗</a
+        ><a class="button secondary" href={`${repository}/releases`}
+          >すべてのリリース ↗</a
+        >
+      </div><p class="source-note">
+        参照: <a href={source('README.ja.md')}>README ↗</a> / <a
+          href={source('docs/faq.md')}>本体FAQ ↗</a
+        > / <a href={source('docs/troubleshooting.md')}>トラブルシュート ↗</a>
+      </p>
+    </div>
+    <div class="next-link">
+      <a href={url('guide')}>次へ: はじめての使い方 →</a><a href={url('faq')}
+        >困ったときはFAQへ →</a
+      >
+    </div>
+  </div>
+</SiteLayout>

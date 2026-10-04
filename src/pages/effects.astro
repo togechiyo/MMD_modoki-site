@@ -1,0 +1,386 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import VersionNote from '../components/VersionNote.astro';
+import { effectGroups, effects } from '../data/effects';
+import { source, url } from '../data/site';
+const toc = [
+  ['choose', '目的から選ぶ'],
+  ['operate', '効果を追加する'],
+  ['materials', '材質のプリセット'],
+  ['comparison', '実画面で比較'],
+  ...effectGroups.map((g) => [g.id, g.title]),
+  ['advanced', '実験機能と版の違い'],
+  ['performance', '重いときの見直し'],
+];
+const materials = [
+  ['MMD Standard', 'まずモデル本来のtoon・sphere・材質色を見る基準。'],
+  [
+    'Stage Standard',
+    'ステージの面陰影を滑らかに、艶を控えめに。背景の材質で試す。',
+  ],
+  [
+    'Cel Shadow Sharp',
+    'セルフ影の境界を硬く、影帯をくっきり。顔の影の境界も確認。',
+  ],
+  [
+    'Light and Shadow / Self Shadow',
+    '標準の光・影やtoon rampの見え方を比較。Self Shadowは法線方向の陰影で、投影影の遮蔽とは分けて扱う。',
+  ],
+  [
+    'Full Light / Full Shadow',
+    'toon flagに依存せず光側・影側を固定して見せる。照明の通常調整とは区別する。',
+  ],
+  ['Luminous', '光らせたい材質を発光対象にする。にじみはルミナス側で調整。'],
+  [
+    'Gloss / Semi Matte / Matte Highlight',
+    '細く強い艶・中間の艶・広く弱い艶。衣装や小物の材質ごとに比較する。',
+  ],
+  [
+    'Unlit Flat / Soft Lit',
+    '照明を切ったフラット表示 / ハイライトを抑えた柔らかい照明。元のテクスチャと陰影を確認。',
+  ],
+  [
+    'Alpha Test',
+    'alpha textureの切り抜き表示。髪などの透明な輪郭を確認する。透明順序の全問題を直す機能ではない。',
+  ],
+  [
+    'SSR Reflective',
+    '床などをFrame Graph SSRの反射対象として指定。SSR後処理も必要。',
+  ],
+  [
+    'Debug White',
+    '白基調でtoonと影を見る診断用。作品の色を決める前の切り分けに。',
+  ],
+];
+const asset = (name: string) =>
+  `${import.meta.env.BASE_URL.replace(/\/$/, '')}/images/effects/${name}.png`;
+---
+
+<SiteLayout
+  title="エフェクトの選び方"
+  description="何を見せたいかで選ぶMMD_modokiの20エフェクト。材質との違い、調整の順序、組み合わせの注意と実画面比較。"
+  active="effects"
+>
+  <PageHeader
+    label="LOOK & EFFECTS"
+    title="見せたい雰囲気から、選ぶ。"
+    description="光をにじませる。顔にピントを合わせる。色をまとめる。まず目的をひとつ決めて、効果をひとつずつ足してみましょう。"
+  />
+  <div class="wrap content doc-layout">
+    <aside class="toc" aria-label="このページの目次">
+      <h2>エフェクトガイド</h2>{
+        toc.map(([id, label]) => <a href={`#${id}`}>{label}</a>)
+      }
+    </aside>
+    <div class="doc-body">
+      <VersionNote />
+      <section id="choose">
+        <h2>何をしたいですか？</h2><div class="choice-grid">
+          <a href="#luminous"
+            ><strong>選んだ部分だけ光らせたい</strong><span
+              >Luminous材質＋ルミナス</span
+            ></a
+          >
+          <a href="#bloom"
+            ><strong>明るい部分をにじませたい</strong><span>ブルーム</span></a
+          >
+          <a href="#dof"
+            ><strong>顔にピントを合わせたい</strong><span>被写界深度</span></a
+          >
+          <a href="#ssao"
+            ><strong>服の重なりを見せたい</strong><span>SSAO</span></a
+          >
+          <a href="#ssr"
+            ><strong>床にモデルを映したい</strong><span
+              >SSR Reflective＋SSR</span
+            ></a
+          >
+          <a href="#lut"
+            ><strong>全体の色味をまとめたい</strong><span>LUT</span></a
+          >
+        </div>
+      </section>
+      <p class="search-entry">
+        <a class="button secondary" href="#effect-search"
+          >20種類を検索・一覧から探す →</a
+        >
+      </p>
+      <section id="operate">
+        <h2>材質と、画面全体の効果は別です</h2><p>
+          材質プリセットは「肌・服・床をどう描くか」。ポストエフェクトは「描いた画面をどう仕上げるか」です。まずモデル本来の材質と照明を見て、次に後処理を足すと変化を見分けやすくなります。
+        </p>
+        <ol>
+          <li>画面右上の<strong>Effect</strong>を開きます。</li><li>
+            材質を変えるときは対象モデルを選び、<strong>材質</strong
+            >タブでプリセットを選択。<strong>選択材質に適用</strong
+            >または<strong>全材質に適用</strong
+            >で反映します。選択しただけでは適用されません。
+          </li><li>
+            画面全体の効果は<strong>効果</strong>タブで調整。<strong
+              >Frame Graph</strong
+            >では＋から効果を追加し、項目を開いて設定します。
+          </li><li>
+            全体ON/OFFと各項目のON/OFFで元の画面と比較。順序を変える前にプロジェクトを別名保存します。
+          </li>
+        </ol>
+        <p>
+          Classic / Frame Graph /
+          Experimentalは処理経路の選択です。混ぜて同時に使う設定ではなく、項目や単位も異なります。経路の変更は再読み込みを伴うため、作業を保存してから切り替えてください。
+        </p>
+        <aside class="notice">
+          <strong
+            >スタックの表示順を、そのまま処理順と思わないでください。</strong
+          ><p>
+            UIはレイヤー表示で内部順序と逆向きになる場合があります。同じ設定でも並べ替えると結果が変わります。全体OFFはFrameGraph資源を解放し、ONで設定を復元します。個別OFFは設定・順序を保持し、GPU資源も保持する場合があります。
+          </p>
+        </aside>
+        <p class="source-note">
+          根拠：<a href={source('src/ui-controller.ts')}>UI実装</a> / <a
+            href={source('docs/framegraph-master-toggle-2026-09-08.md')}
+            >全体ON/OFFの仕様</a
+          >
+        </p>
+      </section>
+      <section id="materials">
+        <h2>材質プリセットの使い分け</h2><p>
+          全部の材質に同じプリセットを適用する前に、変更したい材質をひとつ選んで試すのがおすすめです。下表は通常のMMD材質で表示される選択肢を中心に整理しています。WGSLの割り当てはWebGPU経路が主対象です。
+        </p><div class="table-scroll">
+          <table>
+            <thead
+              ><tr
+                ><th scope="col">プリセット</th><th scope="col"
+                  >選ぶ場面と注意</th
+                ></tr
+              ></thead
+            ><tbody
+              >{
+                materials.map(([name, text]) => (
+                  <tr>
+                    <>
+                      <th scope="row">{name}</th>
+                      <td>{text}</td>
+                    </>
+                  </tr>
+                ))
+              }</tbody
+            >
+          </table>
+        </div><p>
+          .x用のAccessory Toon、OBJ用のOBJ Untextured / OBJ
+          MTLはアクセサリの種類に応じて現れます。モデルと小物の役割は<a
+            href={url('formats') + '#models'}>入力形式ガイド</a
+          >へ。
+        </p><p class="source-note">
+          根拠：<a href={source('src/ui/shader-panel-controller.ts')}
+            >表示する選択肢</a
+          > / <a href={source('src/scene/material-shader-service.ts')}
+            >材質への適用処理</a
+          >
+        </p>
+      </section>
+      <section id="comparison">
+        <h2>同じシーンで、材質を比べる</h2><p>
+          カメラ・フレーム・照明を固定して、アリシアの全材質にプリセットを適用した実画面です。モデルの持つtoon設定によって差の出方は変わります。これはローカル開発ビルドの比較で、公開版の品質保証ではありません。
+        </p><div class="comparison-grid material-comparison">
+          {
+            [
+              ['mmd-standard', 'MMD Standard'],
+              ['soft-lit', 'Soft Lit'],
+              ['cel-shadow-sharp', 'Cel Shadow Sharp'],
+            ].map(([name, label]) => (
+              <figure>
+                <>
+                  <a
+                    href={asset(name)}
+                    aria-label={`${label}の比較画像を原寸で開く`}
+                  >
+                    <img
+                      src={asset(name)}
+                      alt={`同条件のアリシア表示：${label}`}
+                      width="1521"
+                      height="855"
+                      decoding="async"
+                    />
+                  </a>
+                  <figcaption>{label}</figcaption>
+                </>
+              </figure>
+            ))
+          }
+        </div><p class="source-note">
+          ニコニ立体ちゃん（アリシア・ソリッド） / ©dwango, inc. All rights
+          reserved. デザイン：黒星紅白 / モデリング：雨刻憩。<a
+            href="https://3d.nicovideo.jp/alicia/rule.html">利用規約</a
+          >。モデルは付属しません。MMD_modokiはドワンゴの公式商品ではありません。
+        </p>
+      </section>
+      <section class="lut-example">
+        <h2>色の仕上げは、LUTで比較</h2><p>
+          材質はMMD Standardに戻し、LUTだけを追加。内蔵のMonotone / Teal
+          Orangeを強度1.00で比較しています。比較用の設定で、おすすめの固定値ではありません。背景の色まで変わる点が、材質の変更との違いです。
+        </p><div class="comparison-grid">
+          {
+            [
+              ['lut-baseline', 'LUTなし'],
+              ['lut-monotone', 'Monotone / 1.00'],
+              ['lut-teal-orange', 'Teal Orange / 1.00'],
+            ].map(([name, label]) => (
+              <figure>
+                <>
+                  <a
+                    href={asset(name)}
+                    aria-label={`${label}の比較画像を原寸で開く`}
+                  >
+                    <img
+                      src={asset(name)}
+                      alt={`同条件のアリシア表示：${label}`}
+                      width="1521"
+                      height="855"
+                      decoding="async"
+                    />
+                  </a>
+                  <figcaption>{label}</figcaption>
+                </>
+              </figure>
+            ))
+          }
+        </div><p>
+          材質比較3枚はこの照明・モデルでは差が小さい例です。差が大きいと断言せず、ご自身のモデルでもON/OFFと原寸画像を見比べてください。上のモデルクレジットと利用条件は、これらの比較画像にも適用されます。
+        </p>
+      </section>
+      <div class="effect-search" id="effect-search">
+        <label for="effect-query">エフェクト名・目的を絞り込む</label><input
+          id="effect-query"
+          type="search"
+          placeholder="例：ぼかす、色、反射"
+        /><p id="effect-count" aria-live="polite">20種類の効果を掲載</p><p
+          id="effect-empty"
+          hidden
+        >
+          一致する効果がありません。別の語句で試してください。
+        </p>
+      </div>
+      {
+        effectGroups.map((group) => (
+          <section id={group.id} class="effect-group">
+            <h2>{group.title}</h2>
+            <p>{group.summary}</p>
+            {effects
+              .filter((effect) => effect.group === group.id)
+              .map((effect) => (
+                <article class="effect-card" id={effect.id} data-effect-card>
+                  <p class="eyebrow">{effect.en}</p>
+                  <h3>{effect.name}</h3>
+                  <p class="effect-purpose">{effect.purpose}</p>
+                  <p>{effect.look}</p>
+                  <dl>
+                    <dt>調整の出発点</dt>
+                    <dd>{effect.start}</dd>
+                    <dt>組み合わせ・見落とし</dt>
+                    <dd>{effect.watch}</dd>
+                    <dt>処理の増え方</dt>
+                    <dd>{effect.cost}</dd>
+                  </dl>
+                </article>
+              ))}
+          </section>
+        ))
+      }
+      <p class="source-note">
+        20種類の機能・処理の根拠：<a
+          href={source('docs/shader-framegraph-effect-catalog.md')}
+          >公式実装カタログ</a
+        > / <a href={source('src/ui-controller.ts')}>設定UI</a> / <a
+          href={source('src/render/frame-graph-resource-plan.ts')}
+          >追加描画と共有資源</a
+        >。使う場面・試す順序は、このサイトの案内です。速度の比較計測は行っていません。
+      </p>
+      <section id="advanced">
+        <h2>実験機能と、版による違い</h2><details>
+          <summary>PBRを試すときの考え方</summary><p>
+            全体PBRモードは実験設定から有効にする別の材質経路です。通常のMMD材質へ同じ名前の設定を足す機能ではありません。元のtoon表現と結果が変わるため、プロジェクトを別名保存して比較します。
+          </p><ul>
+            <li>基準：PBR Standard / PBR MMD Like。</li><li>
+              肌・透過：Skin / Skin Face / SSS Wax / Thin Translucent。
+            </li><li>
+              小物・衣装：Metal Polished / Metal Satin / Plastic Glossy / Cotton
+              / Satin / Velvet / Leather。
+            </li><li>
+              演出・確認：Emissive / Candy Coat / Aurora / Clay White / PBR No
+              Shadow。
+            </li>
+          </ul><p>
+            Skin Faceは顔の陰影を穏やかにする補正、Clay
+            Whiteは色・模様を無視して造形を見る用途です。Satinの方向性はUV・接線に依存します。通常モードの旧SSS
+            Skin/Waxは選択UIから除外されており、PBR側のSkinと同一の入口ではありません。
+          </p><a href={source('docs/pbr-material-presets-2026-09-08.md')}
+            >PBRの公式説明 ↗</a
+          >
+        </details>
+        <details>
+          <summary>海・水面・外部WGSL・エフェクトのキーについて</summary><p>
+            海エフェクトの内部実装は通常スタックUIでは非表示です。「表示 →
+            水面」と同じ入口だと扱わないでください。外部WGSLは実験機能で、MMEの.fx
+            /
+            .fxsubを読み込む互換機能ではありません。通常材質のエフェクトキーフレーム機能は製品版で棚上げされているため、このガイドでは効果値のキー登録手順を案内していません。
+          </p><a href={source('src/editor/effect-timeline-availability.ts')}
+            >キー機能の公開状態 ↗</a
+          >
+        </details>
+        <aside class="notice">
+          <strong>ローカル開発版とv0.2.4の違い</strong><p>
+            今回の撮影に使った未コミット変更入りのローカル版では、SSAOと輪郭線の共存処理、PBR選択肢の表示順に変更があります。公開版で同じ結果になるとは断言できません。掲載する操作・形式はv0.2.4タグを基準にしています。
+          </p>
+        </aside>
+      </section>
+      <section id="performance">
+        <h2>重いときは、一つずつ戻す</h2><ol>
+          <li>
+            プロジェクトを保存し、効果全体をOFFにして基本描画と比較します。
+          </li><li>
+            SSGI・SSR・SSAOなど追加の形状情報を使う効果、DoFなどぼかし系から個別に確認します。
+          </li><li>
+            粒子数やモーションブラーのサンプル数を増やしていたら見直します。
+          </li><li>
+            最終寸法で短い再生・出力を試します。画面のFPSだけで書き出し速度や品質は判断できません。
+          </li>
+        </ol><p>
+          個別OFFでメモリが直ちに減るとは限りません。不要な項目の削除と全体OFFの意味も区別してください。<a
+            href={url('faq') + '#slow'}>動作が重いときの確認</a
+          > / <a href={url('workflow') + '#test-export'}>出力前の小さなテスト</a
+          >
+        </p>
+      </section>
+      <div class="next-link">
+        <a href={url('workflow')}>見た目を整えて作品にする →</a><a
+          href={url('formats')}>保存・出力を選ぶ →</a
+        >
+      </div>
+    </div>
+  </div>
+</SiteLayout>
+<script>
+  const input = document.querySelector<HTMLInputElement>('#effect-query');
+  const count = document.querySelector('#effect-count');
+  const empty = document.querySelector<HTMLElement>('#effect-empty');
+  input?.addEventListener('input', () => {
+    const query = input.value.trim().toLocaleLowerCase('ja');
+    let shown = 0;
+    document
+      .querySelectorAll<HTMLElement>('[data-effect-card]')
+      .forEach((card) => {
+        card.hidden = !card.textContent
+          ?.toLocaleLowerCase('ja')
+          .includes(query);
+        if (!card.hidden) shown++;
+      });
+    document.querySelectorAll<HTMLElement>('.effect-group').forEach((group) => {
+      group.hidden = ![
+        ...group.querySelectorAll<HTMLElement>('[data-effect-card]'),
+      ].some((card) => !card.hidden);
+    });
+    if (count) count.textContent = `${shown} / 20種類を表示`;
+    if (empty) empty.hidden = shown > 0;
+  });
+</script>

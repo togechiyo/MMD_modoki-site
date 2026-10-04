@@ -1,0 +1,151 @@
+---
+import AppScreenshot from '../components/AppScreenshot.astro';
+import SiteLayout from '../layouts/SiteLayout.astro';
+import { release, source, url } from '../data/site';
+---
+
+<SiteLayout
+  title="MMDの編集を、もっと身近に。"
+  description="MMD_modokiは、モデル・モーションの読み込みから編集、画像・動画出力までを扱う実験的なローカルデスクトップアプリです。"
+>
+  <section class="hero wrap">
+    <div class="hero-copy">
+      <p class="eyebrow">
+        <span class="status-dot"></span> LOCAL MMD EDITOR / VIEWER
+      </p><h1>MMDの編集を、<br /><span>もっと身近に。</span></h1><p
+        class="hero-description"
+      >
+        モデルを読み込む。動きをつくる。<br />あなたのシーンを、画像や動画へ。
+      </p><p class="hero-detail">
+        MMD_modokiは、Babylon.jsとbabylon-mmdをベースにした<br
+          class="desktop-break"
+        />実験的なローカルデスクトップアプリです。
+      </p><div class="actions">
+        <a class="button primary" href={url('download')}
+          >ダウンロード <span aria-hidden="true">↓</span></a
+        ><a class="button secondary" href={url('guide')}
+          >はじめての使い方 <span aria-hidden="true">↗</span></a
+        >
+      </div><p class="hero-caption">
+        Windows / macOS / Linux 向けプレビュー配布
+      </p>
+    </div>
+    <div class="hero-art" aria-hidden="true">
+      <div class="art-meta">
+        <span>SCENE / MOTION / EXPRESSION</span><span>01 — ∞</span>
+      </div><div class="orbit orbit-one"></div><div class="orbit orbit-two">
+      </div><div class="motion-mark"><span>M</span><i></i></div><div
+        class="art-grid"
+      >
+      </div><div class="art-timeline">
+        <span>FRAME</span><div><i></i><i></i><i></i><i></i><b></b></div><span
+          >000</span
+        >
+      </div>
+    </div>
+  </section>
+  <div class="release-strip">
+    <div class="wrap">
+      <span class="badge">PRE-RELEASE</span><strong>{release.tag}</strong><span
+        >{release.published} 公開</span
+      ><a href={release.url}>変更点と既知の制限 ↗</a>
+    </div>
+  </div>
+  <section class="section wrap">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">ACTUAL APP SCREEN</p><h2>
+          シーンを見ながら、編集する。
+        </h2>
+      </div><p>アリシア・ソリッドを読み込んだ<br />実際の編集画面。</p>
+    </div>
+    <AppScreenshot />
+  </section>
+  <section class="section wrap">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">CREATE WITH MMD_MODOKI</p><h2>
+          読み込みから、作品の出力まで。
+        </h2>
+      </div><p>使い慣れたMMDのデータを、<br />新しい編集環境で。</p>
+    </div><div class="feature-grid">
+      <article class="feature">
+        <span class="feature-number">01 / LOAD</span><h3>
+          いつものデータから
+        </h3><p>
+          PMX・PMD・BPMXモデル、VMD・BVMDモーション、VPDポーズや音声を読み込み。アクセサリは.x・OBJに対応します。
+        </p><div class="tags">
+          <span>MODEL</span><span>MOTION</span><span>AUDIO</span>
+        </div>
+      </article><article class="feature">
+        <span class="feature-number">02 / EDIT</span><h3>
+          動きも、表情も、視点も
+        </h3><p>
+          ボーン・モーフ・カメラをタイムラインで編集。照明、影、重力、アクセサリの変形もキーとして扱えます。
+        </p><div class="tags"><span>TIMELINE</span><span>KEYFRAME</span></div>
+      </article><article class="feature">
+        <span class="feature-number">03 / EXPORT</span><h3>
+          シーンを、かたちに
+        </h3><p>
+          静止画PNG、連番PNG、WebM動画へ出力。モデル・カメラのVMD（β）やBVMD、選択ボーンのVPDも書き出せます。
+        </p><div class="tags">
+          <span>PNG</span><span>WebM</span><span>VMD / BVMD</span>
+        </div>
+      </article>
+    </div><p class="source-note">
+      機能の根拠: <a href={source('README.ja.md')}>日本語README ↗</a> / <a
+        href={release.url}>v0.2.4リリース情報 ↗</a
+      >
+    </p>
+  </section>
+  <section class="section guide-band">
+    <div class="wrap guide-band-inner">
+      <div>
+        <p class="eyebrow">GET STARTED</p><h2>最初のシーンをつくろう。</h2><p>
+          ダウンロード、モデルの読み込み、再生、保存。<br
+          />まずは基本の流れから。
+        </p>
+      </div><a class="text-link" href={url('guide')}
+        >スタートガイドを読む <span aria-hidden="true">→</span></a
+      >
+    </div>
+  </section>
+  <section class="section wrap">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">SUPPORT & DOCUMENTATION</p><h2>
+          制作のそばに、使い方を。
+        </h2>
+      </div>
+    </div><div class="support-grid">
+      <a class="support-card" href={url('workflow')}
+        ><span class="eyebrow">WORKFLOW</span><h3>作品になるまで →</h3><p>
+          動き・音・カメラを足し、見た目を整え、保存と出力へ。
+        </p></a
+      >
+      <a class="support-card" href={url('effects')}
+        ><span class="eyebrow">LOOK & EFFECTS</span><h3>
+          エフェクトを選ぶ →
+        </h3><p>光、ぼけ、反射、色。20種類を目的から選ぶ。</p></a
+      >
+      <a class="support-card" href={url('formats')}
+        ><span class="eyebrow">FILES & OUTPUT</span><h3>
+          ファイルを使い分ける →
+        </h3><p>作業を続ける・動きを渡す・動画をつくる。それぞれの形式。</p></a
+      >
+      <a class="support-card" href={url('manual')}
+        ><span class="eyebrow">MANUAL</span><h3>
+          操作マニュアル <span aria-hidden="true">↗</span>
+        </h3><p>読み込み、編集、保存、出力とショートカット。</p></a
+      ><a class="support-card" href={url('faq')}
+        ><span class="eyebrow">FAQ</span><h3>
+          よくある質問 <span aria-hidden="true">↗</span>
+        </h3><p>互換性、動作環境、素材の管理で困ったら。</p></a
+      >
+    </div><aside class="notice">
+      <strong>現在は実験的なプレビュー版です。</strong><p>
+        本家MMDとの完全な表示・物理・エフェクト互換を保証するものではありません。重要な作業では元データを保管し、短い範囲で再生・出力を確認してください。
+      </p>
+    </aside>
+  </section>
+</SiteLayout>

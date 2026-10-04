@@ -1,0 +1,207 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import AppScreenshot from '../components/AppScreenshot.astro';
+import { source, url } from '../data/site';
+const toc = [
+  ['prepare', '素材をそろえる'],
+  ['load-model', 'モデルを表示'],
+  ['motion-audio', '動き・音楽'],
+  ['camera', 'カメラと構図'],
+  ['look', '見た目を整える'],
+  ['save', '作業を保存'],
+  ['test-export', '小さく出力確認'],
+  ['deliver', '完成品を出す'],
+];
+---
+
+<SiteLayout
+  title="制作の流れ"
+  description="モデル読み込みからモーション、音楽、カメラ、エフェクト、保存と出力まで。MMD_modokiで一つのシーンを作る実用ガイド。"
+  active="workflow"
+>
+  <PageHeader
+    label="MAKE YOUR FIRST SCENE"
+    title="モデルを開いて、作品になるまで。"
+    description="素材をそろえる → 動きを確認 → 構図と見た目 → 保存 → 出力。各段階で一度確認すると、あとから戻る場所がわかります。"
+  />
+  <div class="wrap content doc-layout">
+    <aside class="toc" aria-label="このページの目次">
+      <h2>制作の8ステップ</h2>{
+        toc.map(([id, label]) => <a href={`#${id}`}>{label}</a>)
+      }
+    </aside><div class="doc-body">
+      <aside class="version-note">
+        <span class="badge">v0.2.4 基準</span><p>
+          モデル読み込みとカメラ調整はローカル開発ビルドで実機確認しました。それ以外は公開タグの実装に基づく手順です。素材に応じた再生・出力結果は、ご自身のシーンで短く確認してください。
+        </p>
+      </aside>
+      <section id="prepare">
+        <p class="eyebrow">01 / PREPARE</p><h2>
+          素材のフォルダを、そのまま残す
+        </h2><p>
+          モデル本体とテクスチャ、モデルに合うモーション、使用する音源をそろえます。配布ZIPは中のファイルを一つだけ取り出さず、フォルダごと展開します。配布者の利用条件を確認してください。
+        </p><p>
+          最初はモデル1体だけから始めます。モデルが見えることを確認してから、動き・音・背景を足すと問題の原因を絞れます。素材をこのサイトで配布しているわけではありません。
+        </p><div class="checkpoint">
+          <strong>ここで確認</strong><p>
+            モデルとテクスチャが同じ相対配置にある / 使用条件を読んだ /
+            原本と作業用を区別した。
+          </p>
+        </div><a href={url('formats') + '#models'}
+          >PMX・BPMX・OBJ、どれを開く？ →</a
+        >
+      </section>
+      <section id="load-model">
+        <p class="eyebrow">02 / LOAD</p><h2>モデルを表示して、対象を確認</h2><p>
+          <kbd>Ctrl + O</kbd
+          >でPMX・PMD・BPMXを開きます。PMX/PMDでモデル情報が表示された場合は、名前・コメントを確認してOKを選びます。読み込みが終わるまで待ち、全身とテクスチャを確認します。
+        </p><p>
+          複数体あるときは情報欄の<strong>「対象」</strong
+          >で操作するモデルを選びます。表示されているモデルと、編集対象のモデルが同じかを確認する習慣をつけると誤操作を減らせます。
+        </p><AppScreenshot /><div class="checkpoint">
+          <strong>ここで確認</strong><p>
+            全身が見える / テクスチャがある / 情報欄が意図したモデル /
+            描画方式のバッジを確認した。
+          </p>
+        </div><a href={url('faq') + '#texture'}
+          >テクスチャがない・表示がおかしい →</a
+        >
+      </section>
+      <section id="motion-audio">
+        <p class="eyebrow">03 / MOTION & AUDIO</p><h2>
+          動きと音楽は、別々に確かめる
+        </h2><ol>
+          <li>
+            対象モデルを選び、<kbd>Ctrl + M</kbd
+            >でモデル用VMD/BVMDを読み込みます。
+          </li><li>
+            短い範囲を<kbd>Space</kbd> / <kbd>P</kbd>で再生・一時停止します。
+          </li><li>
+            <kbd>Ctrl + Shift + A</kbd
+            >でMP3・WAV・OGGを開き、音が出ることとタイミングを確認します。
+          </li><li>
+            カメラ用のVMD/BVMDは<kbd>Ctrl + Shift + M</kbd>で別に読み込みます。
+          </li>
+        </ol><p>
+          モデルにないボーン名・モーフ名を含むモーションは、期待どおりに動かないことがあります。モデル用の動きとカメラ用の動きは同じ拡張子でも用途が違います。自動判別より専用の読込コマンドを使うと、対象を確認しやすくなります。
+        </p><div class="checkpoint">
+          <strong>ここで確認</strong><p>
+            動きが対象モデルに入った / 音が出る /
+            カメラ用とモデル用を混同していない。
+          </p>
+        </div><a href={url('faq') + '#motion-target'}
+          >別のモデルに入った・動かない →</a
+        >
+      </section>
+      <section id="camera">
+        <p class="eyebrow">04 / CAMERA</p><h2>先に構図を決める</h2><p>
+          停止中のホイールでズーム、右ドラッグで回転、中ボタンドラッグで平行移動。カメラモーションの停止時の視点を見るときは、対象を<strong
+            >カメラ注視点</strong
+          >へ切り替えます。
+        </p><p>
+          手動のカメラ編集では、使いたいフレームに移動して位置・回転・距離・画角を調整し、キーを登録します。次のフレームの構図も登録し、短く再生してつながりを確認します。詳しいキー操作は<a
+            href={url('manual') + '#edit'}>操作一覧</a
+          >へ。
+        </p><p>
+          縦長動画や正方形にしたい場合は、早い段階で出力比率を意識します。横長で決めた構図が、縦長でも人物を収めるとは限りません。
+        </p><div class="checkpoint">
+          <strong>ここで確認</strong><p>
+            頭・手・足が必要な範囲に収まる / カメラのキーを登録した /
+            出力比率で構図を確認。
+          </p>
+        </div>
+      </section>
+      <section id="look">
+        <p class="eyebrow">05 / LOOK</p><h2>照明 → 材質 → 仕上げの順で</h2><p>
+          まず通常の材質で照明の方向と明るさを調整します。次に材質プリセットで艶やtoonの見え方を比較し、最後に画面全体の効果を足します。
+        </p><div class="recipe-grid">
+          <div>
+            <h3>やわらかい人物の1枚</h3><p>
+              MMD StandardとSoft Litを比較 → 顔にDoFの対象を合わせる →
+              LUTを控えめに。顔に影やぼけがかかりすぎていないか確認。
+            </p>
+          </div><div>
+            <h3>ライトを見せるシーン</h3><p>
+              光る材質だけLuminousに → ルミナスの広がりを確認 →
+              必要ならブルーム。白い衣装までにじんだらしきい値・強度を見直す。
+            </p>
+          </div><div>
+            <h3>動きを見せる短い動画</h3><p>
+              構図と動きを先に確認 → 必要ならモーションブラー →
+              短い動画で比較。静止画だけでぼけの量を決めない。
+            </p>
+          </div>
+        </div><p>
+          これは組み合わせを考える順序の例です。万能なプリセット値ではありません。同時に多くの設定を変えず、ON/OFFで差を確認します。
+        </p><a class="text-link" href={url('effects')}
+          >20種類から目的に合う効果を選ぶ →</a
+        >
+      </section>
+      <section id="save">
+        <p class="eyebrow">06 / SAVE</p><h2>完成品の前に、作業を保存</h2><p>
+          <kbd>Ctrl + S</kbd
+          >でプロジェクトを保存します。最初に保存先を選び、以後は上書きです。見た目の比較を始める前、出力前などに<kbd
+            >Ctrl + Alt + S</kbd
+          >で別名を残すと戻りやすくなります。
+        </p><p>
+          プロジェクトは素材の参照を持ちます。保存後にモデル・テクスチャ・音声を移動したり消したりしないでください。別PCへの移動はプロジェクトだけでは足りません。
+        </p><div class="checkpoint">
+          <strong>ここで確認</strong><p>
+            保存先を把握した / 元素材を保持した /
+            変更前の状態が必要なら別名保存した。
+          </p>
+        </div><a href={url('formats') + '#project'}
+          >プロジェクトが残すもの・残さないもの →</a
+        >
+      </section>
+      <section id="test-export">
+        <p class="eyebrow">07 / SMALL TEST</p><h2>
+          1枚と短い範囲で、出力を確認
+        </h2><ol>
+          <li>
+            作品を代表するフレームを1枚PNGにします。幅・高さを直接入力したときは、それぞれEnterで確定し、両方の寸法を再確認します。
+          </li><li>
+            本番と同じ比率で、構図・色・透明な輪郭・影を確認します。
+          </li><li>
+            動画なら動きのある短い範囲をWebMへ。音楽を入れる場合は「音声あり」をON。
+          </li><li>
+            保存されたファイルを再生し、音・映像・長さ・冒頭と末尾を確認します。
+          </li><li>
+            透過合成なら連番PNGの先頭数枚と末尾を開き、空白がないか確認します。編集ソフトで別の背景に重ね、音声は別途合わせます。
+          </li>
+        </ol><p>
+          ビューポートの物理状態を引き継ぐ出力でも、シークや再生の手順・素材・描画経路で見た目は変わる場合があります。本番前の小さな比較を優先してください。長尺・高解像度の大量出力は、確認が済んでから。
+        </p><div class="checkpoint">
+          <strong>ここで確認</strong><p>
+            意図したカメラ / 最終比率・寸法 / 音声あり / 正しい開始・終了 /
+            保存容量 / 保存したファイルを実際に開いた。
+          </p>
+        </div><a href={url('faq') + '#output-difference'}
+          >画面と出力が違うとき →</a
+        >
+      </section>
+      <section id="deliver">
+        <p class="eyebrow">08 / DELIVER</p><h2>用途に合う完成品を出す</h2><p>
+          1枚ならPNG、外部編集・合成なら連番PNG、音付きの確認動画ならWebM。動きを他のMMDツールへ渡す場合はモデルとカメラのVMDを分けます。プロジェクトは完成品とは別に保管します。
+        </p><p>
+          投稿先や提出先がMP4を要求する場合は外部ツールで変換し、変換した結果も確認します。モデルや音源の規約に合わせて、クレジットと公開条件を確認してください。
+        </p><a class="text-link" href={url('formats')}
+          >目的別に出力形式を決める →</a
+        >
+      </section>
+      <p class="source-note">
+        根拠：<a href={source('src/ui-controller.ts')}
+          >読み込み・編集・ショートカット</a
+        > / <a href={source('src/ui/export-ui-controller.ts')}>出力処理</a> / <a
+          href={source('docs/webm-export-physics-state-spec-2026-07-06.md')}
+          >出力の物理状態</a
+        >。制作の順序・確認ポイントは本サイトの案内です。
+      </p><div class="next-link">
+        <a href={url('manual')}>操作を引く →</a><a href={url('faq')}
+          >困りごとから探す →</a
+        >
+      </div>
+    </div>
+  </div>
+</SiteLayout>
