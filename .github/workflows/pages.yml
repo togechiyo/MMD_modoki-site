@@ -18,10 +18,13 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm run typecheck
+      - run: npm run check:translations
       - run: npm run build
         env:
           SITE_URL: https://${{ github.repository_owner }}.github.io
           SITE_BASE: /${{ github.event.repository.name }}
+      - run: npm run check:i18n-source
+      - run: npm run check:translated-html
       - run: npm run check:links
         env:
           SITE_BASE: /${{ github.event.repository.name }}

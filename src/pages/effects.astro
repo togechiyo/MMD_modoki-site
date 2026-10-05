@@ -254,10 +254,13 @@ const asset = (name: string) =>
           id="effect-query"
           type="search"
           placeholder="例：ぼかす、色、反射"
-        /><p id="effect-count" aria-live="polite">20種類の効果を掲載</p><p
-          id="effect-empty"
-          hidden
+        /><p
+          id="effect-count"
+          aria-live="polite"
+          data-count-template="{shown} / {total}種類を表示"
         >
+          20種類の効果を掲載
+        </p><p id="effect-empty" hidden>
           一致する効果がありません。別の語句で試してください。
         </p>
       </div>
@@ -364,15 +367,15 @@ const asset = (name: string) =>
   const input = document.querySelector<HTMLInputElement>('#effect-query');
   const count = document.querySelector('#effect-count');
   const empty = document.querySelector<HTMLElement>('#effect-empty');
+  const normalize = (text: string) =>
+    text.normalize('NFKC').toLocaleLowerCase(document.documentElement.lang);
   input?.addEventListener('input', () => {
-    const query = input.value.trim().toLocaleLowerCase('ja');
+    const query = normalize(input.value.trim());
     let shown = 0;
     document
       .querySelectorAll<HTMLElement>('[data-effect-card]')
       .forEach((card) => {
-        card.hidden = !card.textContent
-          ?.toLocaleLowerCase('ja')
-          .includes(query);
+        card.hidden = !normalize(card.textContent ?? '').includes(query);
         if (!card.hidden) shown++;
       });
     document.querySelectorAll<HTMLElement>('.effect-group').forEach((group) => {
@@ -380,7 +383,12 @@ const asset = (name: string) =>
         ...group.querySelectorAll<HTMLElement>('[data-effect-card]'),
       ].some((card) => !card.hidden);
     });
-    if (count) count.textContent = `${shown} / 20種類を表示`;
+    if (count)
+      count.textContent = (
+        count.getAttribute('data-count-template') ?? '{shown} / {total}'
+      )
+        .replace('{shown}', String(shown))
+        .replace('{total}', '20');
     if (empty) empty.hidden = shown > 0;
   });
 </script>

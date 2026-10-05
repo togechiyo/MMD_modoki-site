@@ -1,0 +1,35 @@
+---
+import { languages, pages } from '../../i18n/config';
+import Home from '../index.astro';
+import Download from '../download.astro';
+import Guide from '../guide.astro';
+import Manual from '../manual.astro';
+import Faq from '../faq.astro';
+import Effects from '../effects.astro';
+import Formats from '../formats.astro';
+import Workflow from '../workflow.astro';
+import Glossary from '../glossary.astro';
+
+export function getStaticPaths() {
+  if (import.meta.env.I18N_EXTRACT === '1') return [];
+  return languages
+    .filter(({ locale }) => locale !== 'ja')
+    .flatMap(({ locale }) =>
+      pages.map((page) => ({ params: { locale, page: page || undefined } })),
+    );
+}
+const components = {
+  '': Home,
+  download: Download,
+  guide: Guide,
+  manual: Manual,
+  faq: Faq,
+  effects: Effects,
+  formats: Formats,
+  workflow: Workflow,
+  glossary: Glossary,
+};
+const Page = components[(Astro.params.page || '') as keyof typeof components];
+---
+
+<Page />

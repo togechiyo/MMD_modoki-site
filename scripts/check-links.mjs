@@ -52,10 +52,40 @@ for (const file of files) {
   }
   if ((html.match(/<h1(?:\s|>)/g) || []).length !== 1)
     errors.push(`${pagePath}: expected one h1`);
-  if (!html.includes('lang="ja"'))
-    errors.push(`${pagePath}: missing Japanese language`);
+  const expectedLocale = pagePath.split('/')[1];
+  const locale = ['en', 'zh-Hant', 'zh-Hans', 'ko'].includes(expectedLocale)
+    ? expectedLocale
+    : 'ja';
+  if (!html.includes(`<html lang="${locale}"`))
+    errors.push(`${pagePath}: incorrect document language ${locale}`);
+  if ((html.match(/rel="alternate" hreflang=/g) || []).length !== 6)
+    errors.push(`${pagePath}: expected five language alternates and x-default`);
+  const canonical = html.match(/rel="canonical" href="([^"]+)"/)?.[1];
+  if (!canonical || new URL(canonical).pathname !== base + pagePath)
+    errors.push(`${pagePath}: incorrect canonical ${canonical}`);
+  const slug =
+    locale === 'ja' ? pagePath.slice(1) : pagePath.slice(locale.length + 2);
+  for (const language of [
+    'ja',
+    'en',
+    'zh-Hant',
+    'zh-Hans',
+    'ko',
+    'x-default',
+  ]) {
+    const alternate = html.match(
+      new RegExp(`rel="alternate" hreflang="${language}" href="([^"]+)"`),
+    )?.[1];
+    const expected =
+      base +
+      '/' +
+      (['ja', 'x-default'].includes(language) ? '' : language + '/') +
+      slug;
+    if (!alternate || new URL(alternate).pathname !== expected)
+      errors.push(`${pagePath}: incorrect ${language} alternate ${alternate}`);
+  }
 }
-if (files.length !== 9) errors.push(`Expected 9 pages; got ${files.length}`);
+if (files.length !== 45) errors.push(`Expected 45 pages; got ${files.length}`);
 if (errors.length) {
   console.error(errors.join('\n'));
   process.exitCode = 1;

@@ -89,6 +89,7 @@ strong {
   display: flex;
   align-items: center;
   gap: 30px;
+  flex-wrap: wrap;
 }
 .brand {
   display: inline-flex;
@@ -124,6 +125,21 @@ nav {
   display: flex;
   gap: 24px;
   margin-left: auto;
+}
+.language-switch {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 4px 18px;
+  width: 100%;
+  margin-left: 0;
+}
+.language-switch a {
+  padding: 6px 0;
+  font-size: 0.8rem;
+}
+.language-switch a[aria-current='true'] {
+  color: var(--pink);
+  box-shadow: 0 2px var(--pink);
 }
 nav a {
   color: var(--muted);

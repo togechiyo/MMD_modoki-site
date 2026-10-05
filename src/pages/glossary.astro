@@ -44,13 +44,15 @@ const sourceHref = (path: string) => {
             }</select
           ></label
         >
-        <button type="reset" class="button secondary">絞り込みをリセット</button
+        <button id="term-reset" type="reset" class="button secondary"
+          >絞り込みをリセット</button
         >
       </div><p
         id="term-count"
         role="status"
         aria-live="polite"
         aria-atomic="true"
+        data-count-template="{shown} / {total}件を表示"
       >
         {terms.length}件を表示
       </p>
@@ -107,16 +109,6 @@ const sourceHref = (path: string) => {
                       data-term-card
                       data-category={t.group}
                       data-aliases={t.aliases}
-                      data-search={[
-                        t.name,
-                        t.ui,
-                        t.where,
-                        t.meaning,
-                        t.change,
-                        t.limits,
-                        t.note ?? '',
-                        t.aliases,
-                      ].join(' ')}
                     >
                       <h3>
                         <a
@@ -190,10 +182,13 @@ const sourceHref = (path: string) => {
   const count = document.querySelector('#term-count');
   const empty = document.querySelector<HTMLElement>('#term-empty');
   const cards = [...document.querySelectorAll<HTMLElement>('[data-term-card]')];
-  const normalize = (v: string) => v.normalize('NFKC').toLocaleLowerCase('ja');
+  const normalize = (v: string) =>
+    v.normalize('NFKC').toLocaleLowerCase(document.documentElement.lang);
   const searchable = cards.map((card) => ({
     card,
-    text: normalize(card.dataset.search ?? ''),
+    text: normalize(
+      `${card.querySelector('h3')?.textContent} ${card.querySelector('dl')?.textContent} ${card.dataset.aliases}`,
+    ),
   }));
   const filter = () => {
     const words = normalize(input?.value.trim() ?? '')
@@ -215,7 +210,12 @@ const sourceHref = (path: string) => {
         (c) => !c.hidden,
       );
     });
-    if (count) count.textContent = `${shown} / ${cards.length}件を表示`;
+    if (count)
+      count.textContent = (
+        count.getAttribute('data-count-template') ?? '{shown} / {total}'
+      )
+        .replace('{shown}', String(shown))
+        .replace('{total}', String(cards.length));
     if (empty) empty.hidden = shown > 0;
   };
   const reset = () => {
