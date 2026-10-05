@@ -108,6 +108,15 @@ try {
         if ((await cards.count()) !== 20)
           failures.push(`${name}: effect search reset failed`);
       }
+      if (slug === '') {
+        if (
+          (await page.locator('.hero-art').count()) !== 0 ||
+          (await page.locator('.hero-app .app-screenshot img').count()) !== 1 ||
+          (await page.locator('.app-screenshot').count()) !== 1 ||
+          !(await page.locator('.hero-app img').isVisible())
+        )
+          failures.push(`${name}: home must show one actual app screenshot`);
+      }
       const brokenImages = await page
         .locator('img')
         .evaluateAll(async (images) => {

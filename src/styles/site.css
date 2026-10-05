@@ -888,6 +888,12 @@ kbd {
 .app-screenshot {
   margin: 1.5rem 0 0;
 }
+.hero-app {
+  min-width: 0;
+}
+.hero-app .app-screenshot {
+  margin-top: 0;
+}
 .app-screenshot img {
   display: block;
   width: 100%;
