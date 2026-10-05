@@ -4,7 +4,7 @@ MMD_modokiのダウンロードと日本語の使い方ガイドです。本体�
 
 - 公開サイト：https://togechiyo.github.io/MMD_modoki-site/
 - アプリ本体：https://github.com/togechiyo/MMD_modoki
-- トップ、ダウンロード、入門、操作マニュアル、FAQ、制作手順、エフェクト、形式の全8ページ。
+- トップ、ダウンロード、入門、操作マニュアル、FAQ、制作手順、エフェクト、形式、用語・パラメータ辞典の全9ページ。
 
 ## 開発と検証
 
@@ -16,7 +16,7 @@ Edgeでの表示確認はプレビュー起動中に npm run check:browser。生
 ## GitHub Pages
 
 Settings → PagesのSourceをGitHub Actionsにします。Actions → Build and deploy Pages → Run workflowで手動公開します。
-ワークフローはリポジトリ名からプロジェクトサブパスを設定します。配布情報は src/data/site.ts、効果の説明は src/data/effects.ts で管理します。
+ワークフローはリポジトリ名からプロジェクトサブパスを設定します。配布情報は src/data/site.ts、効果の説明は src/data/effects.ts、辞典の日本語データは src/data/glossary.ts で管理します。辞典は固定ID、カテゴリ、別名、v0.2.4の確認元を持ち、別言語のデータも追加できる構成です。
 
 ## 掲載画像
 

@@ -1107,6 +1107,146 @@ details:target {
 [hidden] {
   display: none !important;
 }
+.glossary-layout {
+  max-width: 1080px;
+}
+.glossary-version {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+.glossary-quick,
+.glossary-categories,
+.term-related {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+}
+.glossary-quick,
+.glossary-categories {
+  margin: 1.5rem 0;
+}
+.glossary-quick a,
+.glossary-categories a {
+  padding: 0.55rem 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+.glossary-search {
+  margin: 2rem 0 1rem;
+  padding: 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+}
+.glossary-search-fields {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 1rem;
+}
+.glossary-search label {
+  flex: 1 1 210px;
+  min-width: 0;
+  font-size: 0.9rem;
+  color: var(--teal-bright);
+}
+.glossary-search input,
+.glossary-search select {
+  display: block;
+  width: 100%;
+  min-height: 44px;
+  margin-top: 0.5rem;
+  padding: 0.6rem;
+  border: 1px solid #737373;
+  border-radius: 5px;
+  color: #eee;
+  background: #101010;
+  font: inherit;
+}
+.glossary-search button {
+  font: inherit;
+  cursor: pointer;
+  min-height: 44px;
+}
+.glossary-search :is(input, select, button):focus-visible {
+  outline: 3px solid var(--pink);
+  outline-offset: 3px;
+}
+#term-count {
+  margin: 1rem 0 0;
+  font-size: 0.9rem;
+}
+.term-group {
+  scroll-margin-top: 100px;
+  margin: 3rem 0;
+}
+.term-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: 1.5rem;
+}
+.term-card {
+  padding: 1.4rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #161616;
+  scroll-margin-top: 100px;
+  overflow-wrap: anywhere;
+}
+.term-card:target {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 1px var(--teal);
+}
+.term-card h3 {
+  margin: 0 0 1rem;
+  font-size: 1.25rem;
+}
+.term-card h3 a {
+  color: #eee;
+}
+.term-card h3 span {
+  color: var(--teal-bright);
+}
+.term-card dt {
+  margin-top: 0.8rem;
+  font-size: 0.82rem;
+  color: var(--pink);
+  font-weight: 600;
+}
+.term-card dd {
+  margin: 0.2rem 0 0;
+  font-size: 0.92rem;
+}
+.term-ui {
+  font-weight: 600;
+}
+.term-related {
+  margin-top: 1rem;
+  font-size: 0.82rem;
+}
+.term-source {
+  font-size: 0.8rem;
+  margin-top: 1rem;
+}
+.term-source summary {
+  padding: 0.6rem 0;
+  cursor: pointer;
+  color: var(--muted);
+}
+@media (max-width: 760px) {
+  .term-grid {
+    grid-template-columns: 1fr;
+  }
+  .term-card,
+  .glossary-search {
+    padding: 1rem;
+  }
+  .glossary-search button {
+    width: 100%;
+  }
+}
 @media (max-width: 760px) {
   .guide-nav {
     gap: 0.35rem;

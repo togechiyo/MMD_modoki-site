@@ -55,7 +55,7 @@ for (const file of files) {
   if (!html.includes('lang="ja"'))
     errors.push(`${pagePath}: missing Japanese language`);
 }
-if (files.length !== 8) errors.push(`Expected 8 pages; got ${files.length}`);
+if (files.length !== 9) errors.push(`Expected 9 pages; got ${files.length}`);
 if (errors.length) {
   console.error(errors.join('\n'));
   process.exitCode = 1;

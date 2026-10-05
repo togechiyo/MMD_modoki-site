@@ -32,6 +32,7 @@ try {
       'effects/',
       'formats/',
       'workflow/',
+      'glossary/',
     ]) {
       const response = await page.goto(base + slug, {
         waitUntil: 'networkidle',
@@ -77,7 +78,9 @@ try {
         report.headings !== 1 ||
         report.navLinks !== 5 ||
         report.active !==
-          (['effects/', 'formats/', 'workflow/'].includes(slug) ? 0 : 1) ||
+          (['effects/', 'formats/', 'workflow/', 'glossary/'].includes(slug)
+            ? 0
+            : 1) ||
         report.lang !== 'ja'
       )
         failures.push(`${name} ${slug}: semantics ${JSON.stringify(report)}`);
@@ -117,6 +120,60 @@ try {
         )
           failures.push(`${name}: home must show one actual app screenshot`);
       }
+      if (slug === 'glossary/') {
+        const cards = page.locator('[data-term-card]:visible');
+        if ((await cards.count()) !== 32)
+          failures.push(`${name}: dictionary initial count`);
+        await page.locator('#term-query').fill('位置Ｚ');
+        if (!(await page.locator('#camera-target').isVisible()))
+          failures.push(`${name}: dictionary normalized alias search`);
+        await page.locator('#term-query').fill('no-such-term-123');
+        if (
+          (await cards.count()) !== 0 ||
+          !(await page.locator('#term-empty').isVisible())
+        )
+          failures.push(`${name}: dictionary empty state`);
+        await page.getByRole('button', { name: '絞り込みをリセット' }).click();
+        if ((await cards.count()) !== 32)
+          failures.push(`${name}: dictionary reset`);
+        await page.locator('#term-category').selectOption('accessory');
+        if ((await cards.count()) !== 5)
+          failures.push(`${name}: dictionary category`);
+        await page.locator('#term-query').fill('Si');
+        if (!(await page.locator('#accessory-scale').isVisible()))
+          failures.push(`${name}: dictionary combined filter`);
+        await page.getByRole('button', { name: '絞り込みをリセット' }).click();
+        await page
+          .getByRole('navigation', { name: '辞典のカテゴリ' })
+          .getByRole('link', { name: 'カメラ・視点' })
+          .click();
+        if ((await cards.count()) !== 6)
+          failures.push(`${name}: dictionary category anchor`);
+        await page
+          .locator('#camera-distance .term-related')
+          .getByRole('link', { name: '表示桁・step・入力範囲' })
+          .click();
+        if (
+          !(await page.locator('#input-precision').isVisible()) ||
+          (await cards.count()) !== 32
+        )
+          failures.push(`${name}: dictionary cross-category link`);
+        await page.goto(base + 'glossary/#camera-distance');
+        if (!(await page.locator('#camera-distance').isVisible()))
+          failures.push(`${name}: dictionary direct anchor`);
+        await page.locator('#term-query').focus();
+        await page.keyboard.type('FoV');
+        await page.keyboard.press('Tab');
+        if (
+          (await page.locator(':focus').getAttribute('id')) !== 'term-category'
+        )
+          failures.push(`${name}: dictionary keyboard focus`);
+        await page.keyboard.press('Tab');
+        await page.keyboard.press('Enter');
+        if ((await cards.count()) !== 32)
+          failures.push(`${name}: dictionary keyboard reset`);
+        await page.goto(base + 'glossary/');
+      }
       const brokenImages = await page
         .locator('img')
         .evaluateAll(async (images) => {
@@ -137,7 +194,7 @@ try {
       if (name !== 'small-mobile')
         await page.screenshot({
           path: `review/screenshots/${name}-${slug.replace('/', '') || 'home'}.png`,
-          fullPage: true,
+          fullPage: slug !== 'glossary/',
         });
       if (slug === 'faq/') {
         const detail = page.locator('details').nth(1);
@@ -200,8 +257,26 @@ try {
     await page.keyboard.press('Enter');
     if (!page.url().endsWith('#main'))
       failures.push(`${name}: skip link target failed`);
+    await page.goto(base + 'manual/');
+    await page
+      .getByRole('link', { name: 'DとZ・視野角の意味を調べる ↗' })
+      .click();
+    if (
+      !page.url().endsWith('/glossary/#camera-distance') ||
+      !(await page.locator('#camera-distance').isVisible())
+    )
+      failures.push(`${name}: manual to dictionary`);
     await context.close();
   }
+  const noJs = await browser.newContext({ javaScriptEnabled: false });
+  const staticPage = await noJs.newPage();
+  await staticPage.goto(base + 'glossary/');
+  if (
+    (await staticPage.locator('[data-term-card]:visible').count()) !== 32 ||
+    (await staticPage.locator('#glossary-search').isVisible())
+  )
+    failures.push('dictionary without JavaScript');
+  await noJs.close();
 } finally {
   await browser.close();
 }
@@ -224,5 +299,5 @@ if (failures.length) {
   process.exitCode = 1;
 } else
   console.log(
-    `PASS: ${results.length} page/viewport combinations, navigation, no horizontal overflow, FAQ, keyboard skip link; 16 screenshots in review/screenshots`,
+    `PASS: ${results.length} page/viewport combinations, navigation, no horizontal overflow, FAQ, dictionary filters/anchors/keyboard; 18 screenshots in review/screenshots`,
   );

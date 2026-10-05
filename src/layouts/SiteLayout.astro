@@ -57,9 +57,15 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     </header>
     <main id="main">
       {
-        ['guide', 'manual', 'faq', 'workflow', 'formats', 'effects'].includes(
-          active,
-        ) && <GuideNav active={active} />
+        [
+          'guide',
+          'manual',
+          'faq',
+          'workflow',
+          'formats',
+          'effects',
+          'glossary',
+        ].includes(active) && <GuideNav active={active} />
       }
       <slot />
     </main>
