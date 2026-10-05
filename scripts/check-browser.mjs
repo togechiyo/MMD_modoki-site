@@ -124,6 +124,12 @@ try {
         const cards = page.locator('[data-term-card]:visible');
         if ((await cards.count()) !== 32)
           failures.push(`${name}: dictionary initial count`);
+        await page.locator('#term-query').fill('D');
+        if (
+          !(await page.locator('#camera-distance').isVisible()) ||
+          (await page.locator('#bone-rotation').isVisible())
+        )
+          failures.push(`${name}: dictionary single-letter parameter search`);
         await page.locator('#term-query').fill('位置Ｚ');
         if (!(await page.locator('#camera-target').isVisible()))
           failures.push(`${name}: dictionary normalized alias search`);
