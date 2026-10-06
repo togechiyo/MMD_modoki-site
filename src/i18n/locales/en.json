@@ -1,5 +1,4 @@
 {
-  "m899a76c05377": "Making MMD editing more accessible. | MMD_modoki",
   "m62b29cc8d928": "MMD_modoki is an experimental local desktop app for loading and editing models and motion, and exporting images and video.",
   "me013a7e6de1f": "Skip to content",
   "m997393c3daee": "MMD_modoki home",
@@ -12,8 +11,6 @@
   "mdbc468a14b60": "FAQ",
   "m9682ba3b92f7": "Language",
   "m9b69a8dacae6": "LOCAL MMD EDITOR / VIEWER",
-  "m115da745ff6d": "Making MMD editing",
-  "mf61d025ff97b": "more accessible.",
   "m158324384da3": "Load a model. Create motion.",
   "m01624f40565d": "Turn your scene into images and video.",
   "m14054dea2078": "MMD_modoki is built on Babylon.js and babylon-mmd:",
@@ -76,7 +73,6 @@
   "m8dd5cd1a2fcb": "Help with compatibility, system environments and asset management.",
   "m584103fc0f88": "This is currently an experimental preview.",
   "m26b54f17ab00": "Full rendering, physics and effect compatibility with the original MMD is not guaranteed. Keep the original data for important projects, and check playback and exports over a short range first.",
-  "mc4a0275ede6b": "Making MMD editing more accessible.",
   "m041ebc7928fb": "GitHub ↗",
   "m01f27cf65782": "Releases ↗",
   "mcff4db602911": "Report a bug ↗",
